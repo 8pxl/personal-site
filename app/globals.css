@@ -1,17 +1,36 @@
 @import "tailwindcss";
 
-.js-bold {
+.font-js-bold {
     font-family: "Josefin Slab", serif;
     font-optical-sizing: auto;
     font-weight: bold;
     font-style: normal;
 }
 
+.font-js {
+    font-family: "Josefin Slab", serif;
+    font-optical-sizing: auto;
+    /* font-weight: bold; */
+    font-style: normal;
+}
+@theme {
+    --color-white: #f4ebd9;
+    --dark-blue: #282741;
+    --light-blue: #78A1BB;
+    --red: #9E2B25;
+}
+
+[data-gsap] {
+    visibility: hidden;
+    will-change: transform, opacity;
+  }
+
 .star {
     position: absolute;
-    background: white;
+    background: var(--color-white);
     border-radius: 50%;
     pointer-events: none;
+    /* opacity: 0; */
 }
 .grainy-background {
     background: #282741;

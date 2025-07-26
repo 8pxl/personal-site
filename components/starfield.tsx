@@ -16,20 +16,32 @@ function sizeToParallax(x: number): number {
     return Math.max(1,slope * (x - 7) + 4);
 }
 
-
+let windowWidth = 0;
+let windowHeight = 0;
+let prevStars = 0;
+// let generated = [0,0];
 
 export default function Starfield({height} : any) {
     const window = useWindowSize();
-    const windowWidth = window.width ?? 0;
-    const windowHeight = window.height ?? 0;
-    const numStars= Math.floor((windowWidth * windowHeight) / 3000);
-    // console.log(numStars);
+    windowWidth = Math.max(windowWidth, window.width ?? 0);
+    windowHeight = Math.max(windowHeight, window.height ?? 0);
+    const numStars = Math.floor((windowWidth * windowHeight) / 2400);
+    useGSAP(() => {
+        gsap.from(
+            '.star',
+            {
+                duration: 1,
+                ease: "power1.in",
+                opacity: 0,
+            }
+        )
+    }, [numStars])
     const stars = useMemo(
         () => {
             let arr: React.ReactElement[] = [];
-            for (let i = 0; i < numStars; i++) {
-                const size = getRandom(0,7)
-                console.log(sizeToParallax(size))
+            for (let i = prevStars; i < numStars; i++) {
+                const size = getRandom(0,9)
+                // console.log(sizeToParallax(size))
                 // const size = 15;
                 const starStyle : CSSProperties = {
                     width: size,
@@ -42,6 +54,7 @@ export default function Starfield({height} : any) {
                     <div className="star" key={i} data-speed={sizeToParallax(size).toString()} style={starStyle}> </div>
                 )
             }
+            // prevStars = numStars;
             return arr;
         }, 
         [numStars]
