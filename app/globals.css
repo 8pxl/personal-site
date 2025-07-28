@@ -11,7 +11,7 @@
     font-family: "Josefin Slab", serif;
     font-optical-sizing: auto;
     /* font-weight: bold; */
-    font-style: normal;
+    /* font-style: normal; */
 }
 @theme {
     --color-white: #f4ebd9;

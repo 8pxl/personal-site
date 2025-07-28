@@ -25,12 +25,13 @@ export default function Starfield({height} : any) {
     const window = useWindowSize();
     windowWidth = Math.max(windowWidth, window.width ?? 0);
     windowHeight = Math.max(windowHeight, window.height ?? 0);
-    const numStars = Math.floor((windowWidth * windowHeight) / 2400);
+    const numStars = Math.floor((windowWidth * windowHeight) / 2000);
     useGSAP(() => {
         gsap.from(
             '.star',
             {
                 duration: 1,
+                delay: 0.2,
                 ease: "power1.in",
                 opacity: 0,
             }
@@ -51,7 +52,7 @@ export default function Starfield({height} : any) {
                     position: "absolute",
                 }
                 arr.push(
-                    <div className="star" key={i} data-speed={sizeToParallax(size).toString()} style={starStyle}> </div>
+                    <div className="star" key={i} data-speed={sizeToParallax(size).toString()} style={starStyle}></div>
                 )
             }
             // prevStars = numStars;

@@ -18,6 +18,7 @@ export default function ScrollWrapper({fixed, moving} : any) {
     //     }
     // )
     useGSAP(() => {
+        gsap.registerPlugin(ScrollTrigger);
         //opacity
         const introDir = 1.5;
         const delayDir = 0.2;
@@ -26,7 +27,7 @@ export default function ScrollWrapper({fixed, moving} : any) {
           {
             autoAlpha: 0,
             delay: delayDir,
-            duraition: introDir,
+            duration: introDir,
             ease: "power3.inOut",
             opacity: 0,
           }
@@ -57,12 +58,41 @@ export default function ScrollWrapper({fixed, moving} : any) {
           gsap.from(split.chars, {
             duration: introDir / 1.8, 
             delay: delayDir,
-            x: 100,
+            x: 190,
             // y: -30,
             autoAlpha: 0,
             opacity: 0,
             stagger: 0.03, 
           });
+          gsap.from(
+            "[data-gsap='aboutFade']",
+            {
+                scrollTrigger: {
+                    trigger: '.about-text',
+                    end: "+=380",
+                    // markers: true,
+                    scrub: true,
+                },
+                autoAlpha: 0,
+                opacity:0,
+                duration: 2,
+            }
+          );
+
+          gsap.from(
+            '.animLine',
+            {
+                scrollTrigger: {
+                    trigger: '.animLine',
+                    start: "top bottom",
+                    end: "+=380",
+                    scrub:true,
+                    // markers: true
+                },
+                width: 0,
+            }
+          )
+
                     
       })
 
@@ -74,7 +104,7 @@ export default function ScrollWrapper({fixed, moving} : any) {
         if (existing) existing.kill();
       
         const smoother = ScrollSmoother.create({
-          smooth: 1.4,
+          smooth: 1,
           effects: true,
           normalizeScroll: true,
         });
