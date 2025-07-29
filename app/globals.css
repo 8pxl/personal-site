@@ -32,6 +32,15 @@
     pointer-events: none;
     /* opacity: 0; */
 }
+.aboutImage {
+    width: 50%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+    border-radius: 18px; 
+    max-width: 100%;
+  }
+  
 .grainy-background {
     background: #282741;
     /* opacity: 100%; */

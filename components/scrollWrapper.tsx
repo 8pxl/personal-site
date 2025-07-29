@@ -75,6 +75,7 @@ export default function ScrollWrapper({fixed, moving} : any) {
                 },
                 autoAlpha: 0,
                 opacity:0,
+                y: 50,
                 duration: 2,
             }
           );
@@ -90,6 +91,25 @@ export default function ScrollWrapper({fixed, moving} : any) {
                     // markers: true
                 },
                 width: 0,
+            }
+          )
+          gsap.from(
+            '.aboutImage',
+            {
+                scrollTrigger: {
+                    trigger: '.about-image-wrapper',
+                    start: "top 85%",
+                    end: "+=380",
+                    // markers:true,
+                    scrub: true,
+                },
+                delay: 1,
+                // duration:3,
+                opacity:0,
+                autoAlpha:0,
+                top:0,
+                // left:0,
+                rotateX: 90,
             }
           )
 
