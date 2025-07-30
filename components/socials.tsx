@@ -4,7 +4,8 @@ import { TbBrandYoutube, TbBrandInstagram, TbBrandGithub, TbBrandSpotify } from 
 
 export default function SocialLinks() {
     return (
-        <div data-gsap="line1" className="
+        <div data-gsap="" className="
+        willAnimate fade slide-down
         rotate-90 fixed text-white z-1 origin-top-right top-24 gap-2 flex
         right-[calc(1vw)] translate-y-46 lg:translate-y-50 lg:text-lg">
             <div className="italic font-js">

@@ -9,7 +9,7 @@ export default function Email() {
         setText("email copied!")
     }
     return (
-        <div onClick={handleClick} data-gsap="line4" className="font-js text-white fixed bottom-3 right-4 z-1 hover:text-[#78A1BB] cursor-copy">
+        <div onClick={handleClick} data-gsap="" className="fade slide-up font-js text-white fixed bottom-3 right-4 z-1 hover:text-[#78A1BB] cursor-copy">
             {text}
         </div>
     )
