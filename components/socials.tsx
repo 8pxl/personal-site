@@ -47,7 +47,7 @@ export default function SocialLinks() {
                     className="text-white hover:text-green-400 transition duration-200 text-2xl"
                     aria-label="Spotify"
                 >
-                    <TbBrandSpotify/>
+                    <TbBrandSpotify />
                 </a>
             </div>
         </div>

@@ -111,7 +111,7 @@ export default function ScrollWrapper({ fixed, moving }: any) {
           trigger: '.about-image-wrapper',
           start: "top 85%",
           end: "+=380",
-          markers: true,
+          // markers: true,
           scrub: true,
         },
         delay: 1,

@@ -32,7 +32,7 @@ export default function Home() {
                 <Divider />
                 <Works />
               </div>
-              <Starfield height={height} />
+              <Starfield height={1000} />
             </div>
           }
           fixed={
@@ -42,7 +42,6 @@ export default function Home() {
             </div>
           }
         />
-
       </main>
     </>
   );

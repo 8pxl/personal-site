@@ -25,7 +25,7 @@ export default function Starfield({height} : any) {
     const window = useWindowSize();
     windowWidth = Math.max(windowWidth, window.width ?? 0);
     windowHeight = Math.max(windowHeight, window.height ?? 0);
-    const numStars = Math.floor((windowWidth * windowHeight) / 2000);
+    const numStars = Math.floor((windowWidth * height) / 9000);
     useGSAP(() => {
         gsap.from(
             '.star',
