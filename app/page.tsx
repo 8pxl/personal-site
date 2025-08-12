@@ -7,6 +7,7 @@ import Head from "next/head";
 import Divider from "@/components/divider";
 import About from "@/components/about";
 import Works from "@/components/works";
+import Footer from "@/components/footer";
 //https://coolors.co/283044-78a1bb-ebf5ee-bfa89e-8b786d
 
 export default function Home() {
@@ -24,13 +25,14 @@ export default function Home() {
       <main>
         <ScrollWrapper
           moving={
-            <div className={"p-10 grainy-background h-[5000px]"} >
+            <div className={"p-0 grainy-background"} >
               <div className="flex flex-col">
                 <Hero />
                 <Divider />
                 <About />
                 <Divider />
                 <Works />
+                <Footer />
               </div>
               <Starfield height={1000} />
             </div>

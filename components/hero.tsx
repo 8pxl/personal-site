@@ -1,6 +1,6 @@
 export default function Hero() {
     return (
-        <div className="w-full h-[calc(100vh-15rem)] justify-center flex js-bold text-white mt-50 ">
+        <div className="w-full h-[calc(100vh-15rem)] justify-center flex js-bold text-white mt-60 ">
             <div className="flex flex-col text-left font-js w-[calc(85vw)] ease-in-out duration-600" >
                 <div data-gsap="line1" className="fade slide-down text-base md:text-lg lg:text-xl italic mb-4 ">
                     Hello, my name is

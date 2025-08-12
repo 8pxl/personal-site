@@ -2,7 +2,7 @@ export default function About() {
     return (
         <div className="w-full flex flex-col justify-center">
             <div className="w-[calc(80vw)] self-center text-white font-js mt-6 flex flex-col gap-6">
-                <div data-gsap="" className="fade-up-s text-2xl">
+                <div data-gsap="" className="fade-up-s text-2xl md:text-3xl lg:text-4xl">
                     01. ABOUT
                 </div>
                 <div data-gsap="" className="fade-up-s about-text text-justify">
