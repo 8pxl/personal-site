@@ -5,12 +5,12 @@ interface WorkProp {
 }
 export function Work({ name, desc, left }: WorkProp) {
     const video = (
-        <video loop autoPlay muted className={"w-full md:w-7/9 rounded-xl " + (left ? "md:order-1" : "")}>
+        <video loop autoPlay muted className={"w-full md:w-7/9 z-0 hover:scale-105 duration-500 rounded-xl " + (left ? "md:order-1 hover:rotate-[2deg]" : "hover:rotate-[-2deg]")}>
             <source src="assets/work1.mov" />
         </video>
     )
     const text = (
-        <div className="flex flex-col justify-between gap-3 md:justify-start lg:gap-10">
+        <div className="flex flex-col justify-between gap-3 md:justify-start lg:gap-10 z-1">
             <div className="font-bold">
                 {name}
             </div>
@@ -44,17 +44,17 @@ export default function Works() {
                     <Work
                         name="VEX Robotics"
                         desc="Designed, built, programmed, and drove competition robots for VRC. Ranked #6 in the world in 2024 and achieved the #1 World Driver Skills in 2023."
-                        left={true}
+                        left={false}
                     />
                     <Work
                         name="mars"
                         desc="mars (monkey assisted robot simulator) is an open source Rust app simulating the physical behavior of a differential drive wheeled robot. Used to develop and test movement algorithms and 2D motion-profiling. Bezier and linear path planning capabilities assisted in programming real-life robots."
-                        left={false}
+                        left={true}
                     />
                     <Work
                         name="KeejLib"
                         desc="KeejLib is an open-source PROS library for VEX competition robots. It has algorithms for moving robots using Pure Pursuit, motion profiling, and PID control. It is a beginner friendly yet powerful system for developing autonomous routines."
-                        left={true}
+                        left={false}
                     />
                     <div className="relative h-[100vh] justify-centers mt-[10vh]">
                         <div className="absolute top-0 left-0">
