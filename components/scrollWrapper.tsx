@@ -68,24 +68,55 @@ export default function ScrollWrapper({ fixed, moving }: any) {
       stagger: 0.03,
     });
 
-    gsap.utils.toArray<HTMLElement>(AnimSelector.FadeUpScroll)
-      .forEach((elem: HTMLElement) => {
-        gsap.from(
-          elem,
-          {
+    ScrollTrigger.matchMedia({
+      // Mobile
+      "(max-width: 767px)": function () {
+        gsap.utils.toArray<HTMLElement>(AnimSelector.FadeUpScroll).forEach((elem) => {
+          gsap.from(elem, {
             scrollTrigger: {
               trigger: elem,
-              end: "+=380",
-              // markers: true,
+              start: "top 70%",       // slightly later start on mobile
+              end: "+=300",           // shorter distance for smaller screens
               scrub: true,
+              invalidateOnRefresh: true,
             },
             autoAlpha: 0,
             opacity: 0,
+            rotate:0,
+            filter: "blur(2px)",
             y: 50,
+            duration: 1.5,
+          });
+        });
+      },
+    
+      // Desktop
+      "(min-width: 768px)": function () {
+        gsap.utils.toArray<HTMLElement>(AnimSelector.FadeUpScroll).forEach((elem) => {
+          gsap.from(elem, {
+            scrollTrigger: {
+              trigger: elem,
+              start: "top 75%",
+              end: "+=480",
+              scrub: true,
+              invalidateOnRefresh: true,
+            },
+            autoAlpha: 0,
+            opacity: 0,
+            filter: "blur(2px)",
+            y: 50,
+            rotate:0,
             duration: 2,
-          }
-        )
-      });
+          });
+        });
+      }
+    });
+    
+    // Recalculate triggers after everything is loaded
+    // window.addEventListener("load", () => {
+    //   ScrollTrigger.refresh();
+    // });
+    
 
     const dividers = gsap.utils.toArray<HTMLElement>('.animLine')
     dividers.forEach((divider: HTMLElement, i) => {
