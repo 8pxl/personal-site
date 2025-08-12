@@ -12,8 +12,8 @@ function getRandom(min: number, max: number): number {
 }
 
 function sizeToParallax(x: number): number {
-    const slope = 0.6;
-    return Math.max(1,slope * (x - 7) + 4);
+    const slope = 0.2;
+    return Math.max(1.1,slope * (x - 7) + 4);
 }
 
 let windowWidth = 0;
