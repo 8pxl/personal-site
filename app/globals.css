@@ -13,6 +13,11 @@
     /* font-weight: bold; */
     /* font-style: normal; */
 }
+
+.font-space {
+    font-family: "Space Mono"
+}
+
 @theme {
     --color-white: #f4ebd9;
     --dark-blue: #282741;
@@ -40,7 +45,9 @@
     border-radius: 18px; 
     max-width: 100%;
   }
-  
+.fade-up-s {
+    will-change: filter, transform, opacity;
+}
 .grainy-background {
     background: #282741;
     /* opacity: 100%; */
