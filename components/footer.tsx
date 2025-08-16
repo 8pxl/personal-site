@@ -1,6 +1,4 @@
 "use client"
-import { useState } from "react"
-import { useWindowSize } from "@uidotdev/usehooks"
 
 export default function Footer() {
     return(

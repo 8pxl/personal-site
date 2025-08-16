@@ -11,7 +11,7 @@ import Footer from "@/components/footer";
 //https://coolors.co/283044-78a1bb-ebf5ee-bfa89e-8b786d
 
 export default function Home() {
-  const height = 5000;
+  const height = 1000;
   // intro();
   return (
     <>
@@ -38,7 +38,7 @@ export default function Home() {
                 <Works />
                 <Footer />
               </div>
-              <Starfield height={1000} />
+              <Starfield height={height} />
             </div>
           }
           fixed={

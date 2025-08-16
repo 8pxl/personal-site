@@ -3,21 +3,16 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { useGSAP } from "@gsap/react";
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, JSX } from "react";
 import { useWindowSize } from "@uidotdev/usehooks";
 import { SplitText } from "gsap/SplitText";
-import { AnimType, AnimSelector } from "@/util/anims"
+import { AnimSelector } from "@/util/anims";
 
-export default function ScrollWrapper({ fixed, moving }: any) {
-  // useGSAP(() => {
-  //     gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
-  //     let smoother = ScrollSmoother.create({
-  //         smooth: 1.4,
-  //         effects: true,
-  //         normalizeScroll: true
-  //     });
-  //     }
-  // )
+interface scrollWrapperProps {
+  fixed: JSX.Element;
+  moving: JSX.Element;
+}
+export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
   useGSAP(() => {
     gsap.registerPlugin(ScrollTrigger);
     //opacity
@@ -53,7 +48,7 @@ export default function ScrollWrapper({ fixed, moving }: any) {
         y: 150,
       }
     );
-    let split = SplitText.create('[data-gsap="line3"], [data-gsap="line2"]', {
+    const split = SplitText.create('[data-gsap="line3"], [data-gsap="line2"]', {
       type: "chars",
       autoSplit: true,
     });
@@ -67,7 +62,7 @@ export default function ScrollWrapper({ fixed, moving }: any) {
       opacity: 0,
       stagger: 0.03,
     });
-    let mm = gsap.matchMedia();
+    const mm = gsap.matchMedia();
 
     mm.add("(max-width: 767px)", () => {
       gsap.utils.toArray<HTMLElement>(AnimSelector.FadeUpScroll).forEach((elem) => {
@@ -112,7 +107,7 @@ export default function ScrollWrapper({ fixed, moving }: any) {
     );
 
     const dividers = gsap.utils.toArray<HTMLElement>('.animLine')
-    dividers.forEach((divider: HTMLElement, i) => {
+    dividers.forEach((divider: HTMLElement) => {
       gsap.from(
         divider,
         {
