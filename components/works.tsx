@@ -1,12 +1,13 @@
 interface WorkProp {
     name: string;
     desc: string;
+    src: string;
     left: boolean;
 }
-export function Work({ name, desc, left }: WorkProp) {
+export function Work({ name, src, desc, left }: WorkProp) {
     const video = (
         <video loop autoPlay muted className={"w-full md:w-7/9 z-0 hover:scale-105 duration-500 rounded-xl " + (left ? "md:order-1 hover:rotate-[2deg]" : "hover:rotate-[-2deg]")}>
-            <source src="assets/work1.mov" />
+            <source src={src} />
         </video>
     )
     const text = (
@@ -43,20 +44,23 @@ export default function Works() {
                 <div className="flex flex-col gap-8">
                     <Work
                         name="VEX Robotics"
+                        src="assets/robotics.mp4"
                         desc="Designed, built, programmed, and drove competition robots for VRC. Ranked #6 in the world in 2024 and achieved the #1 World Driver Skills in 2023."
                         left={false}
                     />
                     <Work
                         name="mars"
+                        src="assets/mars.mp4"
                         desc="mars (monkey assisted robot simulator) is an open source Rust app simulating the physical behavior of a differential drive wheeled robot. Used to develop and test movement algorithms and 2D motion-profiling. Bezier and linear path planning capabilities assisted in programming real-life robots."
                         left={true}
                     />
                     <Work
                         name="KeejLib"
+                        src="assets/keejlib.mp4"
                         desc="KeejLib is an open-source PROS library for VEX competition robots. It has algorithms for moving robots using Pure Pursuit, motion profiling, and PID control. It is a beginner friendly yet powerful system for developing autonomous routines."
                         left={false}
                     />
-                    <div className="relative h-[100vh] justify-centers mt-[10vh]">
+                    <div className="relative h-[90vh] justify-centers mt-[10vh]">
                         <div className="absolute top-0 left-0">
                         <div className="text-4xl md:text-5xl lg:text-6xl w-min absolute italic tracking-tight ">
                                 <div className = "rotate-[-20deg] origin-center fade-up-s">
@@ -73,7 +77,7 @@ export default function Works() {
                         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 fade-up-s rotate-[-6deg]">
                             <SiteLink
                                 name = "amiheavy?"
-                                link="https://amiqualled.keijay.me/"
+                                link="https://amiheavy.keijay.me/"
                             />
                             <SiteLink
                                 name = "amiqualledyet?"
@@ -81,7 +85,7 @@ export default function Works() {
                             />
                             <SiteLink
                                 name = "copify"
-                                link="https://amiqualled.keijay.me/"
+                                link="https://copify.keijay.me/"
                             />
                             <div className="text-center font-space mt-3">
                                 .keijay.me

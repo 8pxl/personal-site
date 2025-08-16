@@ -6,15 +6,14 @@ export default function About() {
                     01. ABOUT
                 </div>
                 <div data-gsap="" className="fade-up-s about-text text-justify">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
+                    I've spent more than half of my life designing, building, and programming awesome robots. Combining spaghetti code and sketchy wiring to create something that actually <em>exists</em> in the real world is beyond captivating to me. I'm especially excited about the intersection between robotics and artificial intelligence, where emerging technologies like VLA's actively rewriting how we think about robotics.
                 </div>
 
                 <div className="w-full flex justify-center">
                     <div className="about-image-wrapper w-full md:w-[50vw] lg:w-[45vw] relative mt-6 z-1 aspect-square mb-6">
-                        <img loading="eager" src="assets/img1.webp" className="aboutImage absolute left-0" />
-                        <img loading="eager" src="assets/img2.webp" className="aboutImage absolute top-[31.3%] left-[50%] z-2 -translate-x-1/2" />
-                        <img loading="eager" src="assets/img3.webp" className="aboutImage absolute top-[62.6%] left-[50%] z-0" />
+                        <img loading="eager" src="assets/about1.jpeg" className="aboutImage absolute left-0" />
+                        <img loading="eager" src="assets/about2.jpeg" className="aboutImage absolute top-[31.3%] left-[50%] z-2 -translate-x-1/2" />
+                        <img loading="eager" src="assets/about3.jpeg" className="aboutImage absolute top-[62.6%] left-[50%] z-0" />
                     </div>
                 </div>
             </div>

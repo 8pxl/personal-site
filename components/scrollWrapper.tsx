@@ -50,7 +50,7 @@ export default function ScrollWrapper({ fixed, moving }: any) {
         duration: introDir,
         delay: delayDir,
         ease: "power3.out",
-        y: 150
+        y: 150,
       }
     );
     let split = SplitText.create('[data-gsap="line3"], [data-gsap="line2"]', {
@@ -67,56 +67,49 @@ export default function ScrollWrapper({ fixed, moving }: any) {
       opacity: 0,
       stagger: 0.03,
     });
+    let mm = gsap.matchMedia();
 
-    ScrollTrigger.matchMedia({
-      // Mobile
-      "(max-width: 767px)": function () {
-        gsap.utils.toArray<HTMLElement>(AnimSelector.FadeUpScroll).forEach((elem) => {
-          gsap.from(elem, {
-            scrollTrigger: {
-              trigger: elem,
-              start: "top 70%",       // slightly later start on mobile
-              end: "+=300",           // shorter distance for smaller screens
-              scrub: true,
-              invalidateOnRefresh: true,
-            },
-            autoAlpha: 0,
-            opacity: 0,
-            rotate:0,
-            filter: "blur(2px)",
-            y: 50,
-            duration: 1.5,
-          });
+    mm.add("(max-width: 767px)", () => {
+      gsap.utils.toArray<HTMLElement>(AnimSelector.FadeUpScroll).forEach((elem) => {
+        gsap.from(elem, {
+          scrollTrigger: {
+            trigger: elem,
+            start: "top 70%",       // slightly later start on mobile
+            end: "+=300",           // shorter distance for smaller screens
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+          autoAlpha: 0,
+          opacity: 0,
+          rotate:0,
+          filter: "blur(2px)",
+          y: 50,
+          duration: 1.5,
         });
-      },
-    
-      // Desktop
-      "(min-width: 768px)": function () {
-        gsap.utils.toArray<HTMLElement>(AnimSelector.FadeUpScroll).forEach((elem) => {
-          gsap.from(elem, {
-            scrollTrigger: {
-              trigger: elem,
-              start: "top 75%",
-              end: "+=480",
-              scrub: true,
-              invalidateOnRefresh: true,
-            },
-            autoAlpha: 0,
-            opacity: 0,
-            filter: "blur(2px)",
-            y: 50,
-            rotate:0,
-            duration: 2,
-          });
-        });
-      }
+      });
+      ScrollTrigger.refresh();
     });
-    
-    // Recalculate triggers after everything is loaded
-    // window.addEventListener("load", () => {
-    //   ScrollTrigger.refresh();
-    // });
-    
+    mm.add("(min-width: 768px)", () => {
+      gsap.utils.toArray<HTMLElement>(AnimSelector.FadeUpScroll).forEach((elem) => {
+        gsap.from(elem, {
+          scrollTrigger: {
+            trigger: elem,
+            start: "top 75%",
+            end: "+=450",
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+          autoAlpha: 0,
+          opacity: 0,
+          filter: "blur(2px)",
+          y: 50,
+          rotate:0,
+          duration: 2,
+        });
+      });
+      ScrollTrigger.refresh();
+    }
+    );
 
     const dividers = gsap.utils.toArray<HTMLElement>('.animLine')
     dividers.forEach((divider: HTMLElement, i) => {
@@ -128,6 +121,7 @@ export default function ScrollWrapper({ fixed, moving }: any) {
             start: "top bottom",
             end: "+=380",
             scrub: true,
+            invalidateOnRefresh: true,
             // markers: true
           },
           width: 0,
@@ -144,6 +138,7 @@ export default function ScrollWrapper({ fixed, moving }: any) {
           end: "+=380",
           // markers: true,
           scrub: true,
+          invalidateOnRefresh: true,
         },
         delay: 1,
         // duration:3,

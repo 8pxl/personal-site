@@ -1,0 +1,13 @@
+class Project {
+    name: String
+
+    imageUrl: String
+
+    link: String
+
+    info: String
+}
+
+output {
+  renderer = new JsonRenderer {}
+}

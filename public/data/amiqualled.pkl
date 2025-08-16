@@ -1,0 +1,15 @@
+import "project.pkl"
+
+amiqualled: project.Project = new {
+    name = "am i qualled yet?"
+
+    imageUrl = ""
+
+    link = ""
+
+    info = ""
+}
+
+output {
+  renderer = new JsonRenderer {}
+}

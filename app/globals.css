@@ -1,14 +1,16 @@
 @import "tailwindcss";
 
 .font-js-bold {
-    font-family: "Josefin Slab", serif;
+    /* font-family: "Josefin Slab", serif; */
+    font-family: Cambria;
     font-optical-sizing: auto;
     font-weight: bold;
     font-style: normal;
 }
 
 .font-js {
-    font-family: "Josefin Slab", serif;
+    /* font-family: "Josefin Slab", serif; */
+    font-family: Cambria;
     font-optical-sizing: auto;
     /* font-weight: bold; */
     /* font-style: normal; */
