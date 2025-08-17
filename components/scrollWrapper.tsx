@@ -76,7 +76,7 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
             trigger: elem,
             start: "top 70%",       // slightly later start on mobile
             end: "+=300",           // shorter distance for smaller screens
-            scrub: isSafariOrFirefox ? 0.5 : true, // Less intensive scrubbing for Safari/Firefox
+            scrub: true, // Less intensive scrubbing for Safari/Firefox
             invalidateOnRefresh: true,
           },
           autoAlpha: 0,
