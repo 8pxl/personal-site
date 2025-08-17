@@ -28,7 +28,9 @@ export default function Starfield({ height }: StarfieldProps) {
   const window = useWindowSize();
   windowWidth = Math.max(windowWidth, window.width ?? 0);
   windowHeight = Math.max(windowHeight, window.height ?? 0);
-  const numStars = Math.floor((windowWidth * height) / 9000);
+  // Reduce number of stars for better performance in Safari/Firefox
+  const browserReduceFactor = /^((?!chrome|android).)*safari|firefox/i.test(navigator.userAgent) ? 1.5 : 1;
+  const numStars = Math.floor((windowWidth * height) / (9000 * browserReduceFactor));
   useGSAP(() => {
     gsap.from(
       '.star',

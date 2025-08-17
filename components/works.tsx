@@ -6,12 +6,12 @@ interface WorkProp {
 }
 export function Work({ name, src, desc, left }: WorkProp) {
   const video = (
-    <video loop autoPlay muted className={"w-full md:w-7/9 z-0 hover:scale-105 duration-500 rounded-xl " + (left ? "md:order-1 hover:rotate-[2deg]" : "hover:rotate-[-2deg]")}>
+    <video loop autoPlay muted className={"w-full md:w-[77%] z-0 hover:scale-105 duration-500 rounded-xl " + (left ? "md:order-1 hover:rotate-[2deg]" : "hover:rotate-[-2deg]")}>
       <source src={src} />
     </video>
   )
   const text = (
-    <div className="flex flex-col justify-between gap-3 md:justify-start lg:gap-10 z-1">
+    <div className="flex flex-col justify-between gap-3 md:w-[23%] md:justify-start lg:gap-10 z-1">
       <div className="font-bold">
         {name}
       </div>
@@ -48,7 +48,7 @@ export default function Works() {
         <div className="flex flex-col gap-8">
           <Work
             name="VEX Robotics"
-            src="assets/robotics.mp4"
+            src="assets/r1.mp4"
             desc="Designed, built, programmed, and drove competition robots for VRC. Ranked #6 in the world in 2024 and achieved the #1 World Driver Skills in 2023."
             left={false}
           />
@@ -66,7 +66,7 @@ export default function Works() {
           />
           <div className="relative h-[90vh] justify-centers mt-[10vh]">
             <div className="absolute top-0 left-0">
-              <div className="text-4xl md:text-5xl lg:text-6xl w-min absolute italic tracking-tight ">
+              <div className="text-4xl md:text-5xl lg:text-5xl w-min absolute italic tracking-tight ">
                 <div className="rotate-[-20deg] origin-center fade-up-s">
                   some
                 </div>

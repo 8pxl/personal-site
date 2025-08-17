@@ -64,6 +64,9 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
     });
     const mm = gsap.matchMedia();
 
+    // Browser detection for performance optimization
+    const isSafariOrFirefox = /^((?!chrome|android).)*safari|firefox/i.test(navigator.userAgent);
+    
     mm.add("(max-width: 767px)", () => {
       gsap.utils.toArray<HTMLElement>(AnimSelector.FadeUpScroll).forEach((elem) => {
         gsap.from(elem, {
@@ -71,13 +74,14 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
             trigger: elem,
             start: "top 70%",       // slightly later start on mobile
             end: "+=300",           // shorter distance for smaller screens
-            scrub: true,
+            scrub: isSafariOrFirefox ? 0.5 : true, // Less intensive scrubbing for Safari/Firefox
             invalidateOnRefresh: true,
           },
           autoAlpha: 0,
           opacity: 0,
-          rotate:0,
-          filter: "blur(2px)",
+          rotate: 0,
+          // Remove blur filter for Safari/Firefox as it's performance intensive
+          ...(isSafariOrFirefox ? {} : { filter: "blur(2px)" }),
           y: 50,
           duration: 1.5,
         });
@@ -96,7 +100,8 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
           },
           autoAlpha: 0,
           opacity: 0,
-          filter: "blur(2px)",
+          // Remove blur filter for Safari/Firefox as it's performance intensive
+          ...(isSafariOrFirefox ? {} : { filter: "blur(2px)" }),
           y: 50,
           rotate:0,
           duration: 2,

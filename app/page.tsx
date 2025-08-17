@@ -22,6 +22,9 @@ export default function Home() {
           href="https://fonts.googleapis.com/css2?family=Josefin+Slab:wght@300;400;600;700&display=swap"
           rel="stylesheet"
         />
+        <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet"
+        />
         <link rel="preload" as="image" href="/assets/img1.jpg" />
         <link rel="preload" as="image" href="/assets/img2.jpg" />
         <link rel="preload" as="image" href="/assets/img3.jpg" />
