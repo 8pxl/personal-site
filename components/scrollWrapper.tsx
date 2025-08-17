@@ -114,10 +114,7 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
     );
 
     const dividers = gsap.utils.toArray<HTMLElement>('.animLine')
-    dividers.forEach((divider: HTMLElement, index) => {
-      // Special handling for the first divider
-      const isFirstDivider = index === 0;
-      
+    dividers.forEach((divider: HTMLElement) => {
       gsap.from(
         divider,
         {
@@ -125,17 +122,11 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
             trigger: divider,
             start: "top bottom",
             end: "+=380",
-            scrub: isSafariOrFirefox ? 0.5 : true, // Less intensive scrubbing for Safari/Firefox
+            scrub: true,
             invalidateOnRefresh: true,
-            fastScrollEnd: true, // Improve performance
             // markers: true
           },
           width: 0,
-          // Force Safari to properly render the first divider
-          onStart: isFirstDivider && isSafariOrFirefox ? function() {
-            // Force a repaint in Safari
-            divider.style.transform = 'translateZ(0)';
-          } : undefined,
         }
       )
     });

@@ -32,7 +32,7 @@ interface SiteLink {
 }
 export function SiteLink({ name, link }: SiteLink) {
   return (
-    <div className="text-7xl md:text-8xl lg:text-9xl text-center tracking-tighter hover:tracking-wider duration-500 italic underline hover:text-red-300 hover:scale-110 hover:rotate-[1.5deg]">
+    <div className="text-6xl md:text-8xl lg:text-9xl text-center tracking-tighter hover:tracking-wider duration-500 italic underline hover:text-red-300 hover:scale-110 hover:rotate-[1.5deg]">
       <a target="_blank" href={link}>{name}</a>
     </div>
   )
