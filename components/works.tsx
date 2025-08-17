@@ -6,7 +6,7 @@ interface WorkProp {
 }
 export function Work({ name, src, desc, left }: WorkProp) {
   const video = (
-    <video loop autoPlay muted className={"w-full md:w-[77%] z-0 hover:scale-105 duration-500 rounded-xl " + (left ? "md:order-1 hover:rotate-[2deg]" : "hover:rotate-[-2deg]")}>
+    <video loop autoPlay muted playsInline className={"w-full md:w-[77%] z-0 hover:scale-105 duration-500 rounded-xl " + (left ? "md:order-1 hover:rotate-[2deg]" : "hover:rotate-[-2deg]")}>
       <source src={src} />
     </video>
   )

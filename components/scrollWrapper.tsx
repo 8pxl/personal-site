@@ -17,7 +17,7 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
     gsap.registerPlugin(ScrollTrigger);
     //opacity
     const introDir = 1.5;
-    const delayDir = 0.2;
+    const delayDir = 0.7;
 
     gsap.utils.toArray<HTMLElement>(AnimSelector.Fade)
       .forEach((elem: HTMLElement) => {
@@ -27,6 +27,8 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
           duration: introDir,
           ease: "power3.inOut",
           opacity: 0,
+          delay: delayDir - 0.3,
+
         }
         )
       });
@@ -66,7 +68,7 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
 
     // Browser detection for performance optimization
     const isSafariOrFirefox = /^((?!chrome|android).)*safari|firefox/i.test(navigator.userAgent);
-    
+
     mm.add("(max-width: 767px)", () => {
       gsap.utils.toArray<HTMLElement>(AnimSelector.FadeUpScroll).forEach((elem) => {
         gsap.from(elem, {
@@ -103,7 +105,7 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
           // Remove blur filter for Safari/Firefox as it's performance intensive
           ...(isSafariOrFirefox ? {} : { filter: "blur(2px)" }),
           y: 50,
-          rotate:0,
+          rotate: 0,
           duration: 2,
         });
       });
@@ -112,7 +114,10 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
     );
 
     const dividers = gsap.utils.toArray<HTMLElement>('.animLine')
-    dividers.forEach((divider: HTMLElement) => {
+    dividers.forEach((divider: HTMLElement, index) => {
+      // Special handling for the first divider
+      const isFirstDivider = index === 0;
+      
       gsap.from(
         divider,
         {
@@ -120,11 +125,17 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
             trigger: divider,
             start: "top bottom",
             end: "+=380",
-            scrub: true,
+            scrub: isSafariOrFirefox ? 0.5 : true, // Less intensive scrubbing for Safari/Firefox
             invalidateOnRefresh: true,
+            fastScrollEnd: true, // Improve performance
             // markers: true
           },
           width: 0,
+          // Force Safari to properly render the first divider
+          onStart: isFirstDivider && isSafariOrFirefox ? function() {
+            // Force a repaint in Safari
+            divider.style.transform = 'translateZ(0)';
+          } : undefined,
         }
       )
     });
