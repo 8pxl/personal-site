@@ -155,21 +155,21 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
 
   })
 
-  const window = useWindowSize()
+  const windowSize = useWindowSize()
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
     const existing = ScrollSmoother.get();
     if (existing) existing.kill();
-
+    console.log(windowSize.width)
     const smoother = ScrollSmoother.create({
-      smooth: 1,
+      smooth: (windowSize.width ? windowSize.width : 900) < 650 ? 0 : 1,
       effects: true,
       normalizeScroll: true,
     });
 
     return () => smoother.kill();
-  }, [window]);
+  }, [windowSize]);
   return (
     <div id="smooth-wrapper">
       {fixed}
