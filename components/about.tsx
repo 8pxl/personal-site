@@ -7,7 +7,7 @@ export default function About() {
           01. ABOUT
         </div>
         <div data-gsap="" className="fade-up-s about-text text-justify">
-          I've spent more than half of my life designing, building, and programming awesome robots. Combining spaghetti code and sketchy wiring to create something that actually <em>exists</em> in the real world is beyond captivating to me. I'm especially excited about the intersection between robotics and artificial intelligence, where emerging technologies like VLA's actively rewriting how we think about robotics.
+          I've spent more than half of my life designing, building, and programming awesome robots. Combining (sometimes questionable) code and sketchy wiring to create something that actually <em>exists</em> in the real world is beyond captivating to me. I'm especially excited about the intersection between robotics and artificial intelligence, where emerging technologies like VLA's are actively changing how we think about robotics.
         </div>
 
         <div className="w-full flex justify-center">

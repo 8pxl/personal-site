@@ -39,7 +39,7 @@ export function SiteLink({ name, link }: SiteLink) {
 }
 
 export default function Works() {
-  return (
+  return (  
     <div className="w-full flex flex-col justify-center">
       <div className="w-[calc(80vw)] self-center text-white font-js mt-6 flex flex-col gap-6">
         <div className="text-2xl md:text-3xl lg:text-4xl fade-up-s">
