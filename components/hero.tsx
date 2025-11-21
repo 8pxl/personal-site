@@ -1,7 +1,12 @@
+import Planets from "./planets";
+
 export default function Hero() {
     return (
-        <div className="w-full h-[calc(100vh-15rem)] justify-center flex js-bold text-white mt-60 ">
-            <div className="flex flex-col text-left font-js w-[calc(84vw)] ease-in-out duration-600" >
+        <div className="relative w-full h-[calc(100vh-15rem)] justify-center flex js-bold text-white mt-60 ">
+            <div className="absolute inset-0 z-0 flex items-center justify-center overflow-hidden -mt-60">
+                <Planets />
+            </div>
+            <div className="flex flex-col text-left font-js w-[calc(84vw)] ease-in-out duration-600 z-10 pointer-events-none" >
                 <div data-gsap="line1" className="fade slide-down text-base md:text-lg lg:text-xl italic mb-4 ">
                     Hello, my name is
                 </div>
