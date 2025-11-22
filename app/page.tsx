@@ -1,5 +1,5 @@
 import Starfield from "@/components/starfield";
-import Planets from "@/components/planets";
+// import Planets from "@/components/planets";
 import Tabbar from "@/components/tabbar";
 import ScrollWrapper from "@/components/scrollWrapper";
 import Hero from "@/components/hero";
@@ -52,7 +52,6 @@ export default function Home() {
           }
           fixed={
             <div>
-              <Tabbar />
               <SocialLinks />
               <Email />
             </div>
