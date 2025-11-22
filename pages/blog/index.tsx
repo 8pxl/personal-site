@@ -1,4 +1,4 @@
-export default function Photos() {
+export default function Blog() {
   return (
     <div>
       hello world!
