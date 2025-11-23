@@ -36,12 +36,10 @@ export default function RootLayout({
         <link rel="preload" as="image" href="/assets/img3.jpg" />
       </Head>
       <body>
-        <main>
+        <Providers>
+          {children}
           <Tabbar />
-          <Providers>
-            {children}
-          </Providers>
-        </main>
+        </Providers>
       </body>
     </html >
   );

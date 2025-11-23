@@ -16,7 +16,7 @@ function Tab({ children }: TabProps) {
 export default function Tabbar() {
   return (
     <div >
-      <nav className="absolute z-4 left-[0.5vw] top-[calc(0.5vw-0.4rem)] flex flex-row border-white gap-4 text-white font-js">
+      <nav className="fixed z-4 left-[0.5vw] top-[calc(0.5vw-0.4rem)] flex flex-row border-white gap-4 text-white font-js">
         <TransitionLink href="/">about</TransitionLink>
         <TransitionLink href="/blog">blog</TransitionLink>
         <TransitionLink href="/photos">photos</TransitionLink>
