@@ -1,0 +1,50 @@
+"use client"
+import { ReactNode, useRef } from "react";
+import { useHover } from "@/context/HoverContext";
+
+
+
+interface CardProps {
+  children: ReactNode
+  title: String
+}
+export default function Card({ children, title }: CardProps) {
+  const { setHovered, setHoveredRect } = useHover();
+  const cardRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
+
+  const handleMouseEnter = () => {
+    setHovered(true);
+    const updateRect = () => {
+      if (cardRef.current) {
+        setHoveredRect(cardRef.current.getBoundingClientRect());
+      }
+      rafRef.current = requestAnimationFrame(updateRect);
+    };
+    updateRect();
+  };
+
+  const handleMouseLeave = () => {
+    setHovered(false);
+    setHoveredRect(null);
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+    }
+  };
+
+  return (
+    <div
+      ref={cardRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className="duration-300 flex flex-col p-4 border-t-1 hover:border-1 overflow-clip hover:scale-110 hover:border-solid border-white border-dashed w-[80vw] md:w-[50vw] aspect-[7/3] gap-4 hover:z-50 hover:bg-[#23223D]"
+    >
+
+
+      <h1 className="text-2xl ">
+        {title}
+      </h1>
+      {children}
+    </div >
+  )
+}
