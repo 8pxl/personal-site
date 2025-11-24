@@ -1,7 +1,13 @@
+import Card from "@/components/blog/card";
+import Posts from "@/components/blog/posts";
+import Title from "@/components/blog/title";
+
 export default function Blog() {
+  const height = 1000;
   return (
-    <h1 className="text-9xl">
-      hello world!
-    </h1>
+    <div className="flex flex-col gap-10">
+      <Title />
+      <Posts />
+    </div>
   )
 }
