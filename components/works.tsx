@@ -6,8 +6,8 @@ interface WorkProp {
   left: boolean;
 }
 export function Work({ name, src, link, desc, left }: WorkProp) {
-      // onClick={() => window.open(src, "_blank")}
-      // <a target="_blank" href={link}></a>
+  // onClick={() => window.open(src, "_blank")}
+  // <a target="_blank" href={link}></a>
   const video = (
     <video
       loop autoPlay muted playsInline className={"w-full z-0 hover:scale-105 duration-500 rounded-xl " + (left ? "md:order-1 hover:rotate-[2deg]" : "hover:rotate-[-2deg]")}>
@@ -25,11 +25,11 @@ export function Work({ name, src, link, desc, left }: WorkProp) {
     </div>
   )
   return (
-    <div className="flex flex-col md:flex-row gap-2 fade-up-s">
-      <a  target="_blank" href={link} className={"w-full md:w-[77%] " + (left ? "md:order-1" : "")}>
+    <div suppressHydrationWarning className="flex flex-col md:flex-row gap-2 fade-up-s">
+      <a target="_blank" href={link} className={"w-full md:w-[77%] " + (left ? "md:order-1" : "")}>
         {video}
       </a>
-      
+
       {text}
     </div>)
 }
@@ -46,10 +46,10 @@ export function SiteLink({ name, link }: SiteLink) {
 }
 
 export default function Works() {
-  return (  
+  return (
     <div className="w-full flex flex-col justify-center">
       <div className="w-[calc(80vw)] self-center text-white font-js mt-6 flex flex-col gap-6">
-        <div className="text-2xl md:text-3xl lg:text-4xl fade-up-s">
+        <div suppressHydrationWarning className="text-2xl md:text-3xl lg:text-4xl fade-up-s">
           02. WORKS
         </div>
         <div className="flex flex-col gap-8">
@@ -77,18 +77,18 @@ export default function Works() {
           <div className="relative h-[90vh] justify-centers mt-[10vh]">
             <div className="absolute top-0 left-0">
               <div className="text-4xl md:text-5xl lg:text-5xl w-min absolute italic tracking-tight ">
-                <div className="rotate-[-20deg] origin-center fade-up-s">
+                <div suppressHydrationWarning className="rotate-[-20deg] origin-center fade-up-s">
                   some
                 </div>
-                <div className="fade-up-s ml-10 font-bold">
+                <div suppressHydrationWarning className="fade-up-s ml-10 font-bold">
                   cool
                 </div>
-                <div className="fade-up-s rotate-[10deg] origin-center">
+                <div suppressHydrationWarning className="fade-up-s rotate-[10deg] origin-center">
                   websites
                 </div>
               </div>
             </div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 fade-up-s rotate-[-6deg]">
+            <div suppressHydrationWarning className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 fade-up-s rotate-[-6deg]">
               <SiteLink
                 name="amiheavy?"
                 link="https://amiheavy.keijay.me/"
