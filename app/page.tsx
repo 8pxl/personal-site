@@ -14,27 +14,14 @@ import Footer from "@/components/footer";
 export default function Home() {
   const height = 1000;
   return (
-    <ScrollWrapper
-      moving={
-        <div className={"p-0 grainy-background"} >
-          <div className="flex flex-col">
-            <Hero />
-            <Divider />
-            <About />
-            <Divider />
-            <Works />
-            <Footer />
-          </div>
-          <Starfield height={height} />
-        </div>
-      }
-      fixed={
-        <div>
-          <SocialLinks />
-          <Email />
-        </div>
-      }
-    />
+    <div className="flex flex-col">
+      <Hero />
+      <Divider />
+      <About />
+      <Divider />
+      <Works />
+      <Footer />
+    </div>
   );
 }
 
