@@ -37,7 +37,10 @@ export default function Card({ children, title }: CardProps) {
       ref={cardRef}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="duration-300 flex flex-col p-4 border-t-1 hover:border-1 overflow-clip hover:scale-110 hover:border-solid border-white border-dashed w-[80vw] md:w-[50vw] aspect-[7/3] gap-4 hover:z-50 hover:bg-[#23223D]"
+      className="flex flex-col p-4 border-t-1 hover:border-0 overflow-clip hover:scale-110 hover:border-solid border-white border-dashed w-[80vw] md:w-[50vw] aspect-[7/3] gap-4 hover:z-50 hover:bg-[#23223D]"
+      style={{
+        transition: "scale 0.3s ease-in-out, background 0.3s ease-in-out"
+      }}
     >
 
 
