@@ -8,6 +8,8 @@ import ScrollWrapper from "@/components/scrollWrapper";
 import Starfield from "@/components/starfield";
 import SocialLinks from "@/components/socials";
 import Email from "@/components/email";
+import HoverOverlay from "@/components/HoverOverlay";
+
 
 export const metadata: Metadata = {
   title: "keijay.me",
@@ -42,7 +44,9 @@ export default function RootLayout({
       </Head>
       <body>
         <Providers>
+          <HoverOverlay />
           <ScrollWrapper
+
             moving={
               <div className={"p-0 grainy-background"} >
                 {children}
