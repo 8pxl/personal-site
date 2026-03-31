@@ -1,4 +1,5 @@
 import { Link as TransitionLink } from "next-transition-router";
+import WorkVideo from "@/components/media/WorkVideo";
 interface WorkProp {
   name: string;
   page: string;
@@ -10,12 +11,7 @@ interface WorkProp {
 export function Work({ name, page, src, link, desc, left }: WorkProp) {
   // onClick={() => window.open(src, "_blank")}
   // <a target="_blank" href={link}></a>
-  const video = (
-    <video
-      loop autoPlay muted playsInline className={"w-full z-0 hover:scale-105 duration-500 rounded-xl " + (left ? "md:order-1 hover:rotate-[2deg]" : "hover:rotate-[-2deg]")}>
-      <source src={src} />
-    </video>
-  )
+  const video = <WorkVideo src={src} left={left} href={link} />
   const text = (
     <div className="flex flex-col justify-between gap-3 md:w-[23%] md:justify-start lg:gap-10 z-1">
       <div className="font-bold">
@@ -33,9 +29,9 @@ export function Work({ name, page, src, link, desc, left }: WorkProp) {
   )
   return (
     <div suppressHydrationWarning className="flex flex-col md:flex-row gap-2 fade-up-s">
-      <a target="_blank" href={link} className={"w-full md:w-[77%] " + (left ? "md:order-1" : "")}>
+      <div className={"w-full md:w-[77%] " + (left ? "md:order-1" : "")}>
         {video}
-      </a>
+      </div>
 
       {text}
     </div>)

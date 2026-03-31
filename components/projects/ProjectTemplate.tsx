@@ -1,4 +1,5 @@
 import { Link as TransitionLink } from "next-transition-router";
+import WorkVideo from "@/components/media/WorkVideo";
 
 type Props = {
   title: string;
@@ -29,16 +30,7 @@ export default function ProjectTemplate({
         </div>
 
         <div className="flex flex-col gap-3">
-          <video
-            loop
-            autoPlay
-            muted
-            playsInline
-            controls
-            className="w-full rounded-xl"
-          >
-            <source src={videoSrc} />
-          </video>
+          <WorkVideo src={videoSrc} href={externalLink} />
           {externalLink ? (
             <a
               className="text-sm md:text-base underline italic hover:text-[#78A1BB] duration-300"
