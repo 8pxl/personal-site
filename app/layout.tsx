@@ -3,7 +3,6 @@ import "@/components/providers"
 import "./globals.css";
 import Providers from "@/components/providers";
 import Tabbar from "@/components/tabbar";
-import Head from "next/head";
 import ScrollWrapper from "@/components/scrollWrapper";
 import Starfield from "@/components/starfield";
 import SocialLinks from "@/components/socials";
@@ -24,24 +23,12 @@ export default function RootLayout({
   const starsHeight = 1000;
   return (
     <html lang="en">
-      <Head>
-        <title>keijay huang</title>
-        <meta name="keijay huang" />
+      <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Josefin+Slab:wght@300;400;600;700&display=swap"
           rel="stylesheet"
         />
-        <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
-          rel="stylesheet"
-        />
-
-        <style>
-          @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap');
-        </style>
-        <link rel="preload" as="image" href="/assets/img1.jpg" />
-        <link rel="preload" as="image" href="/assets/img2.jpg" />
-        <link rel="preload" as="image" href="/assets/img3.jpg" />
-      </Head>
+      </head>
       <body>
         <Providers>
           <HoverOverlay />

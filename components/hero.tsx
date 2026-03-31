@@ -1,14 +1,14 @@
 export default function Hero() {
   return (
     <div className="w-full h-[calc(100vh-15rem)] justify-center flex js-bold text-white mt-60 ">
-      <div className="flex flex-col text-left font-js w-[calc(84vw)] ease-in-out duration-600" >
+      <div className="flex flex-col text-left w-[calc(84vw)] ease-in-out duration-600" >
         <div suppressHydrationWarning data-gsap="line1" className="fade slide-down text-base md:text-lg lg:text-xl italic mb-4 ">
           Hello, my name is
         </div>
-        <div suppressHydrationWarning data-gsap="line2" className="fade text-5xl md:text-7xl lg:text-8xl font-js-bold">
+        <div suppressHydrationWarning data-gsap="line2" className="fade text-5xl md:text-7xl lg:text-8xl font-hero">
           Keijay Huang.
         </div>
-        <div suppressHydrationWarning data-gsap="line3" className="fade text-xl md:text-2xl lg:text-3xl font-js-bold">
+        <div suppressHydrationWarning data-gsap="line3" className="fade text-xl md:text-2xl lg:text-3xl font-hero">
           I design and program robots.
         </div>
         <div suppressHydrationWarning data-gsap="line4" className="fade slide-up mt-4 mr-20 italic">
