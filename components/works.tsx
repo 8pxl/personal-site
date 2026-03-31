@@ -26,7 +26,7 @@ export function Work({ name, page, src, link, desc, left }: WorkProp) {
         <br />
         <br />
         <div className="font-bold hover:px-2 duration-500 ease-in-out">
-          <TransitionLink href={"projects/" + page}>read more {'>>'}</TransitionLink>
+          <TransitionLink href={"/projects/" + page}>read more {'>>'}</TransitionLink>
         </div>
       </div>
     </div>
@@ -63,7 +63,7 @@ export default function Works() {
           <Work
             name="VEX Robotics"
             page="vex"
-            src="assets/r1.mp4"
+            src="/assets/r1.mp4"
             link="https://www.youtube.com/watch?v=dGqBq1Zsa4k"
             desc="Designed, built, programmed, and drove competition robots for VRC. Ranked #6 in the world in 2024 and achieved the #1 World Driver Skills in 2023."
             left={false}
@@ -71,7 +71,7 @@ export default function Works() {
           <Work
             name="mars"
             page="mars"
-            src="assets/mars.mp4"
+            src="/assets/mars.mp4"
             link="https://github.com/8pxl/mars-rs"
             desc="mars (monkey assisted robot simulator) is an open source Rust app simulating the physical behavior of a differential drive wheeled robot. Used to develop and test movement algorithms and 2D motion-profiling. Bezier and linear path planning capabilities assisted in programming real-life robots."
             left={true}
@@ -79,7 +79,7 @@ export default function Works() {
           <Work
             name="KeejLib"
             page="keejlib"
-            src="assets/keejlib.mp4"
+            src="/assets/keejlib.mp4"
             link="https://github.com/8pxl/keejLib"
             desc="KeejLib is an open-source PROS library for VEX competition robots. It has algorithms for moving robots using Pure Pursuit, motion profiling, and PID control. It is a beginner friendly yet powerful system for developing autonomous routines."
             left={false}

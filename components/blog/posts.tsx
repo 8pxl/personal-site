@@ -1,3 +1,4 @@
+"use client"
 import { getPosts } from "@/util/postLoader";
 import { ReactNode, useRef } from "react";
 import { useHover } from "@/context/HoverContext";
@@ -55,7 +56,6 @@ export function Card({ children, title }: CardProps) {
 
 export default function Posts() {
   const posts = getPosts();
-  console.log(posts)
   return (
     <div className="w-[100vw] flex flex-col items-center justify-center gap-0 text-white font-js">
       {posts.map(post => (
