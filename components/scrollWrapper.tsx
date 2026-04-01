@@ -18,6 +18,12 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
   const pathname = usePathname();
   useGSAP(() => {
     gsap.registerPlugin(ScrollTrigger);
+
+    // Ensure newly navigated content isn't stuck hidden.
+    // We keep `[data-gsap] { visibility: hidden; }` in CSS to prevent flashes,
+    // but on route transitions the animation pass can miss elements.
+    gsap.set("#smooth-content [data-gsap]", { visibility: "inherit" });
+
     //opacity
     const introDir = 1.5;
     const delayDir = 0.7;
@@ -57,6 +63,13 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
       type: "chars",
       autoSplit: true,
     });
+
+    // SplitText can be empty during route transitions; guard to avoid leaving
+    // hero lines hidden.
+    if (!split.chars || split.chars.length === 0) {
+      gsap.set('[data-gsap="line2"], [data-gsap="line3"]', { autoAlpha: 1, opacity: 1 });
+      return;
+    }
 
     gsap.from(split.chars, {
       duration: introDir / 1.8,
@@ -162,12 +175,15 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
 
     const existing = ScrollSmoother.get();
     if (existing) existing.kill();
-    console.log(windowSize.width)
+    // console.log(windowSize.width)
     const smoother = ScrollSmoother.create({
       smooth: (windowSize.width ? windowSize.width : 900) < 650 ? 0 : 1,
       effects: true,
       normalizeScroll: true,
     });
+
+    // Enable data-speed / data-lag parallax effects (used by Starfield, Photos).
+    smoother.effects("[data-speed]");
 
     return () => smoother.kill();
   }, [windowSize, pathname]);

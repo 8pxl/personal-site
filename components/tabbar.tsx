@@ -4,10 +4,6 @@ import { useGSAP } from "@gsap/react";
 import { Link as TransitionLink } from "next-transition-router";
 import { ReactNode, useRef } from "react";
 
-interface TabProps {
-  children: ReactNode
-}
-
 export default function Tabbar() {
   const el = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout>(null);
@@ -33,7 +29,7 @@ export default function Tabbar() {
 
     const onScroll = () => {
 
-      console.log("is visible", isVisible)
+      // console.log("is visible", isVisible)
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
       if (isVisible) {
@@ -43,7 +39,7 @@ export default function Tabbar() {
       }
 
       timeoutRef.current = setTimeout(() => {
-        console.log("starting show anim")
+        // console.log("starting show anim")
         hide.pause();
         show.restart()
         isVisible = true
