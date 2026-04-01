@@ -17,7 +17,7 @@ interface scrollWrapperProps {
 export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
   const pathname = usePathname();
   useGSAP(() => {
-    gsap.registerPlugin(ScrollTrigger);
+    gsap.registerPlugin(ScrollTrigger, SplitText);
 
     // Ensure newly navigated content isn't stuck hidden.
     // We keep `[data-gsap] { visibility: hidden; }` in CSS to prevent flashes,
@@ -59,27 +59,53 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
         y: 150,
       }
     );
-    const split = SplitText.create('[data-gsap="line3"], [data-gsap="line2"]', {
-      type: "chars",
-      autoSplit: true,
-    });
+    let split: SplitText | null = null;
+    let rafId = 0;
+    let tries = 0;
 
-    // SplitText can be empty during route transitions; guard to avoid leaving
-    // hero lines hidden.
-    if (!split.chars || split.chars.length === 0) {
-      gsap.set('[data-gsap="line2"], [data-gsap="line3"]', { autoAlpha: 1, opacity: 1 });
-      return;
-    }
+    const initSplit = () => {
+      const targets = gsap.utils.toArray<HTMLElement>(
+        '[data-gsap="line3"], [data-gsap="line2"]'
+      );
+      if (targets.length === 0) return false;
 
-    gsap.from(split.chars, {
-      duration: introDir / 1.8,
-      delay: delayDir,
-      x: 190,
-      // y: -30,
-      autoAlpha: 0,
-      opacity: 0,
-      stagger: 0.03,
-    });
+      // Revert any previous split before re-splitting.
+      split?.revert();
+      split = SplitText.create(targets, {
+        type: "chars",
+        autoSplit: true,
+      });
+
+      if (!split.chars || split.chars.length === 0) {
+        split.revert();
+        split = null;
+        return false;
+      }
+
+      gsap.from(split.chars, {
+        duration: introDir / 1.8,
+        delay: delayDir,
+        x: 190,
+        autoAlpha: 0,
+        opacity: 0,
+        stagger: 0.03,
+      });
+
+      return true;
+    };
+
+    // On initial load + transition navigations, the hero DOM can land a tick later.
+    // Retry a few frames so SplitText sees the real nodes.
+    const attempt = () => {
+      if (initSplit()) return;
+      tries += 1;
+      if (tries >= 12) {
+        gsap.set('[data-gsap="line2"], [data-gsap="line3"]', { autoAlpha: 1, opacity: 1 });
+        return;
+      }
+      rafId = requestAnimationFrame(attempt);
+    };
+    rafId = requestAnimationFrame(attempt);
     const mm = gsap.matchMedia();
 
     // Browser detection for performance optimization
@@ -166,7 +192,11 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
       }
     )
 
-
+    return () => {
+      mm.revert();
+      if (rafId) cancelAnimationFrame(rafId);
+      split?.revert();
+    };
   }, [pathname])
 
   const windowSize = useWindowSize()
