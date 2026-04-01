@@ -1,14 +1,33 @@
 ## Overview
 
-Designed, built, programmed, and drove competition robots for VRC.
+I've competed in VRC for 7 years as the team captain, builder, programmer, and driver on multiple teams, including 8198X, 2496R, and 2496Y. VRC is an international robotics competition where teams build, design, and program robots from scratch to compete head-to-head in challenges which change every season.
 
-## Highlights
+### Highlights
+
+Among 10,000+ teams:
 
 - Ranked #6 in the world in 2024
 - #1 World Driver Skills in 2023
+- Won 55+ regional, national, and international awards
 
-## What I Worked On
+I also qualified and competed at the world championships in all 7 years I competed!
 
-- Mechanical design + iteration
-- Autonomous programming + tuning
-- Driver practice + match strategy
+## Software
+
+This section will cover some robot specific implementations from each year, for more details on movement algorithms and other shared code, see [keejLib](/projects/keejlib)
+
+### Spin Up (2023)
+
+
+#### Flywheel Control
+The VRC game Spin Up consisted of shooting foam discs into a goal. Our first robot for this season utilized a flywheel to launch discs into the goal, which presented many software issues: 
+
+<br/>
+
+1. Small variations in flywheel speed would impact the distance the disc traveled
+2. The flywheel speed needed to recover quickly to support rapid firing of consecutive discs
+
+<br/>
+
+To solve this, I designed and implemented a feedforward + pi controller for the commanded motor voltages. The system utilized two soruces of feedforward. First, the target motor voltage is estimated by using an experimentally determined polynomial fit between commanded voltage and flywheel velocity (rpm). Secondly, the flywheel system would maximize velocity recovery by giving a maximum voltage command to the motors while a disc was entering the flywheel. This improved the recovery speed based on the characteristics of the specific motor behavior (more torque is generated when actual velocity / commanded velocity is maximized).
+

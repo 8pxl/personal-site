@@ -1,11 +1,10 @@
-"use client"
-import { useGSAP } from "@gsap/react"
+"use client";
 
-export function intro() {
-    useGSAP(() => {
-        gsap.from(
-          '[data-gsap="line1"',
-          {opacity:0}
-        )
-      })
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+
+export function useIntro() {
+  useGSAP(() => {
+    gsap.from('[data-gsap="line1"', { opacity: 0 });
+  });
 }

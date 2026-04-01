@@ -21,26 +21,14 @@ export default function ProjectTemplate({
           <div className="text-4xl md:text-6xl lg:text-7xl font-hero tracking-tight">
             {title}
           </div>
-          <TransitionLink
-            href="/projects"
-            className="text-sm md:text-base italic hover:text-[#78A1BB] duration-300"
-          >
-            back
-          </TransitionLink>
+
+          <div className="font-bold hover:px-2 duration-500 ease-in-out">
+            <TransitionLink href="/"> {"<<"} back</TransitionLink>
+          </div>
         </div>
 
         <div className="flex flex-col gap-3">
           <WorkVideo src={videoSrc} href={externalLink} />
-          {externalLink ? (
-            <a
-              className="text-sm md:text-base underline italic hover:text-[#78A1BB] duration-300"
-              href={externalLink}
-              target="_blank"
-              rel="noreferrer"
-            >
-              open link
-            </a>
-          ) : null}
         </div>
 
         <div className="mt-2">{children}</div>

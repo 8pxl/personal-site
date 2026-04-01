@@ -1,13 +1,251 @@
 ## Overview
 
-KeejLib is an open-source PROS library for VEX competition robots.
+KeejLib is an open-source PROS library for VEX competition robots. It is beginner friendly, but still powerful and extensible. It was used to break two world skills world records (2024 and 2023).
 
-## Capabilities
+## Features
 
-- Pure Pursuit
-- Motion profiling
-- PID control helpers
+- Motor wrapper + groups (including diffy groups)
+- Piston wrapper + groups
+- Controller wrapper
+- Generic PID utilities
+- Utilities (`util`)
+- Chassis class
+  - PID drive
+  - PID turn
+  - Auto-straight
+  - Arc turn
+  - Odom
+  - 1D motion profiling (asymmetric trapezoidal)
+  - PID move-to-point
+  - Boomerang controller
 
-## Notes
+## Hardware Abstractions
 
-This page will grow into docs + examples.
+### Motor Groups
+
+Motor groups can be initialized using the port number of each motor.
+
+```cpp
+lib::mtrs intakeMtrs({1, 2});
+lib::diffy chassMtrs({3, 4, 5, 6});
+```
+
+`lib::mtrs` groups any number of motors and provides common methods to spin/stop/etc.
+
+`lib::diffy` is a differential motor group. It can spin each half of the group at different velocities. A common use case is a chassis where the left/right sides often need different outputs. Diffy groups inherit all methods from normal motor groups.
+
+Diffy motor groups must consist of an even number of motors. When initializing `2n` motors, the first `n` motors are one side and the second `n` motors are the other.
+
+```cpp
+intakeMtrs.spin(127); // normal motor group
+chassMtrs.spin(90);   // diffy motor group (same output both sides)
+chassMtrs.spinDiffy(127, -100);
+```
+
+`spin` works for both types. `spinDiffy` is unique to `lib::diffy`.
+
+### Piston Groups
+
+Piston groups are created by passing existing `pros::ADIDigitalOut` objects.
+
+```cpp
+pros::ADIDigitalOut piston('B');
+lib::pis tsukasa({piston}, false);
+```
+
+The constructor's second argument is the initial piston state. Methods like `toggle`, `getState`, and `setState` do what their names suggest.
+
+### Controller
+
+KeejLib wraps the PROS controller to provide concise button access, a selection tool, and simple drive curves (arcade + tank).
+
+```cpp
+pros::Controller controller_pros(pros::E_CONTROLLER_MASTER);
+lib::controller controller_lib(controller_pros);
+```
+
+Example driver code (2496R Worlds 2023):
+
+```cpp
+void keej() {
+  std::vector<bool> cont = robot::controller.getAll(ALLBUTTONS);
+  chass.spinDiffy(robot::controller.drive(1, util::controller::arcade));
+  bool cataIdle = cata::curr == cata::idle;
+
+  if (cont[NL1]) cata::fire();
+  if (cont[NR2]) tsukasa.toggle();
+  if (cont[NR1] && tsukasa.getState()) tsukasa.toggle();
+  if (cont[R1] && cataIdle) itsuki.spin(127);
+  else if (cont[L2]) itsuki.spin(-127);
+  else if (cataIdle) itsuki.stop('c');
+  if (cont[NUP]) expansion.toggle();
+}
+```
+
+`getAll` returns a vector of button states. It's usually easiest to request all buttons using the `ALLBUTTONS` macro.
+
+To make indexing easier, an enum maps button names to indices. Note: `N` denotes a "new" press.
+
+```text
+L1 = 0,
+NL1 = 1,
+L2 = 2,
+NL2 = 3,
+R1 = 4,
+NR1 = 5,
+R2 = 6,
+NR2 = 7,
+UP = 8,
+NUP = 9,
+DOWN = 10,
+NDOWN = 11,
+LEFT = 12,
+NLEFT = 13,
+RIGHT = 14,
+NRIGHT = 15,
+X = 16,
+NX = 17,
+B = 18,
+NB = 19,
+Y = 20,
+NY = 21,
+A = 22,
+NA = 23
+```
+
+```cpp
+std::vector<bool> cont = robot::controller.getAll(ALLBUTTONS);
+
+if (cont[A]) std::cout << "button A was pressed!" << std::endl;
+if (cont[NL1]) std::cout << "new button L1 press detected!" << std::endl;
+```
+
+#### Controller: Drive
+
+The `drive` method returns a 2-length vector containing left/right drive outputs given controller inputs. It takes a direction (`1` or `-1`) and a drive mode (`util::controller::arcade` or `util::controller::tank`).
+
+```cpp
+chass.spinDiffy(robot::controller.drive(1, util::controller::arcade));
+```
+
+You can optionally curve joystick inputs. See this curve reference: https://www.desmos.com/calculator/puepnlubzh
+
+```cpp
+robot::controller.setCurves(0, 8);
+```
+
+#### Controller: Select
+
+Note: this method is blocking.
+
+`select` displays options on the controller screen and lets you cycle with arrow buttons; pressing `A` selects the current option. It returns the index of the selection.
+
+```cpp
+int color = robot::controller.select({"blue", "red", "green"});
+```
+
+## Utility
+
+Overview of a few utility features (see `util.h` for details):
+
+- `struct pidConstants`: PID constants
+- `struct point`: two doubles
+- `typedef point vec`: alias for `point`
+- `struct robotConstants`: constants used to initialize a `chassis`
+- `struct atns`: auton function pointers + names
+- `class cubicBezier`: cubic bezier defined by 4 points
+- `double dtr()`: degrees -> radians
+- `double rtd()`: radians -> degrees
+- `double sign()`: returns `1` if positive, `-1` otherwise
+- `double hypot()`: hypotenuse (supports two numbers or a `lib::point`)
+- `double absoluteAngleToPoint()`: angle between two points via inverse tangent
+- `double dist()`: distance between two `point`s
+
+## PID
+
+The `pid` class is a reusable PID controller implementation. Initialize it with `pidConstants` and an initial error (often `0`). Call `out` with the current error to get the controller output.
+
+```cpp
+lib::pid pidController(constants, target);
+
+while (true) {
+  double error = 0; // compute error somehow
+  double output = pidController.out(error);
+}
+```
+
+## Bezier
+
+KeejLib supports cubic bezier curves defined using 4 points. The bezier class can evaluate the curve and its derivative at a given `t`.
+
+The current curve length approximation subdivides the curve into straight segments and sums them. It's accurate but slower than more advanced methods.
+
+## Turn Helpers
+
+- `dirToSpin`: given current heading and desired heading, returns `1` or `-1` to pick the shorter spin direction
+- `minError`: returns the minimum angular error between headings
+
+## Timer
+
+KeejLib includes a timer utility to track elapsed time (stopwatch-style).
+
+```cpp
+lib::timer t1;
+int timeElapsed;
+
+// do stuff
+timeElapsed = t1.time();
+t1.reset();
+```
+
+## Chassis
+
+The chassis class handles drive movement. Example initialization:
+
+```cpp
+pros::Imu imu(5);
+lib::diffy chassMtrs({1, 2, 3, 4});
+
+lib::chassis chass(
+  chassMtrs,
+  imu,
+  {6, 8},
+  {
+    .horizTrack = 0,
+    .vertTrack = 0,
+    .trackDia = 0,
+    .maxSpeed = 0,
+    .fwdAccel = 0,
+    .fwdDecel = 0,
+    .revAccel = 0,
+    .revDecel = 0,
+    .velToVolt = 0,
+  }
+);
+```
+
+The constructor takes:
+
+1. A `lib::diffy` object for chassis motors
+2. A `pros::Imu` object
+3. A list of encoder ports (currently supports 2)
+4. A `lib::robotConstants` instance
+
+### Robot Constants
+
+Units don't matter as long as they're consistent.
+
+For odom:
+
+- `horizTrack`: distance to center of horizontal tracking wheel
+- `vertTrack`
+- `trackDia`: tracking wheel radius/diameter (depending on your definition)
+
+For motion profiling:
+
+- `maxSpeed`
+- `fwdAccel`
+- `fwdDecel`
+- `revAccel`
+- `revDecel`
+- `velToVolt`: conversion from velocity to motor voltage

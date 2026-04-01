@@ -7,7 +7,7 @@ import { useHover } from "@/context/HoverContext";
 
 interface CardProps {
   children: ReactNode
-  title: String
+  title: string
 }
 
 export function Card({ children, title }: CardProps) {
