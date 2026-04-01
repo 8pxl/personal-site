@@ -7,6 +7,7 @@ import ScrollWrapper from "@/components/scrollWrapper";
 import Starfield from "@/components/starfield";
 import SocialLinks from "@/components/socials";
 import Email from "@/components/email";
+import ResumeLink from "@/components/resumeLink";
 import HoverOverlay from "@/components/HoverOverlay";
 
 
@@ -43,6 +44,7 @@ export default function RootLayout({
             fixed={
               <div>
                 <SocialLinks />
+                <ResumeLink />
                 <Email />
               </div>
             }

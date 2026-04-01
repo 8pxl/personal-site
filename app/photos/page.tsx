@@ -1,7 +1,6 @@
+import PhotosParallaxGrid from "@/components/photos/PhotosParallaxGrid";
+import { photos } from "@/components/photos/photosManifest";
+
 export default function Photos() {
-  return (
-    <h1 className="text-9xl">
-      goodbye world!
-    </h1>
-  )
+  return <PhotosParallaxGrid photos={photos} />;
 }

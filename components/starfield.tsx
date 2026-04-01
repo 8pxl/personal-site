@@ -57,7 +57,13 @@ export default function Starfield({ height }: StarfieldProps) {
           position: "absolute",
         }
         arr.push(
-          <div className="star" key={i} data-speed={sizeToParallax(size).toString()} style={starStyle}></div>
+          <div
+            className="star"
+            key={i}
+            data-speed={sizeToParallax(size).toString()}
+            suppressHydrationWarning
+            style={starStyle}
+          ></div>
         )
       }
       // prevStars = numStars;

@@ -12,7 +12,7 @@ import { HoverProvider } from "@/context/HoverContext";
 export default function Providers({ children }: { children: React.ReactNode }) {
   const { width, height } = useWindowSize();
   const diagonal = Math.sqrt((width ?? 0) ** 2 + (height ?? 0) ** 2)
-  console.log(diagonal);
+  // console.log(diagonal);
   const numCircles = 3;
   const wipeDir = 0.7;
   const staggerOffset = 0.54;
