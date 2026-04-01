@@ -11,7 +11,7 @@ function getRandom(min: number, max: number): number {
 }
 
 function sizeToParallax(x: number): number {
-  const slope = 0.2;
+  const slope = 0.4;
   return Math.max(1.1, slope * (x - 7) + 4);
 }
 
@@ -57,7 +57,13 @@ export default function Starfield({ height }: StarfieldProps) {
           position: "absolute",
         }
         arr.push(
-          <div className="star" key={i} data-speed={sizeToParallax(size).toString()} style={starStyle}></div>
+          <div
+            className="star"
+            key={i}
+            data-speed={sizeToParallax(size).toString()}
+            suppressHydrationWarning
+            style={starStyle}
+          ></div>
         )
       }
       // prevStars = numStars;

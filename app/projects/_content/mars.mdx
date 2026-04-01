@@ -1,0 +1,13 @@
+## Overview
+
+mars (monkey assisted robot simulator) is an open source Rust app simulating the physical behavior of a differential drive robot. Primarily, it offers a fast way to iterate when designing and debugging movement algorithms for robots, and also allows for planning of complex autonmous routines.
+
+### Why I Built It
+
+Designing algorithms is hard. Particularly for VEX robots, where there is no standard simulation software to test complex algorithms without needing hardware
+
+## How I Built It
+
+mars is built with rust for its preformance and saftey gains, as well as the ability to run on the web with WASM compilation. The simulation needs to run at at least 240HZ in addition to any complex algorithms are being tested on top of the simulation, so preformance was the highest priority. Mars is built with [macroquad](https://github.com/not-fl3/macroquad), an extremely barebones game engine providing not much more than efficient 2D rendering.
+
+The differential drive is simulated using derived kinematics simulations, and the simulation makes use of multithreading to run efficiently.

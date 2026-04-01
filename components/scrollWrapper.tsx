@@ -7,14 +7,23 @@ import { useLayoutEffect, JSX } from "react";
 import { useWindowSize } from "@uidotdev/usehooks";
 import { SplitText } from "gsap/SplitText";
 import { AnimSelector } from "@/util/anims";
+import { usePathname } from "next/navigation";
+
 
 interface scrollWrapperProps {
   fixed: JSX.Element;
   moving: JSX.Element;
 }
 export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
+  const pathname = usePathname();
   useGSAP(() => {
     gsap.registerPlugin(ScrollTrigger);
+
+    // Ensure newly navigated content isn't stuck hidden.
+    // We keep `[data-gsap] { visibility: hidden; }` in CSS to prevent flashes,
+    // but on route transitions the animation pass can miss elements.
+    gsap.set("#smooth-content [data-gsap]", { visibility: "inherit" });
+
     //opacity
     const introDir = 1.5;
     const delayDir = 0.7;
@@ -55,6 +64,13 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
       autoSplit: true,
     });
 
+    // SplitText can be empty during route transitions; guard to avoid leaving
+    // hero lines hidden.
+    if (!split.chars || split.chars.length === 0) {
+      gsap.set('[data-gsap="line2"], [data-gsap="line3"]', { autoAlpha: 1, opacity: 1 });
+      return;
+    }
+
     gsap.from(split.chars, {
       duration: introDir / 1.8,
       delay: delayDir,
@@ -76,13 +92,12 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
             trigger: elem,
             start: "top 70%",       // slightly later start on mobile
             end: "+=300",           // shorter distance for smaller screens
-            scrub: true, // Less intensive scrubbing for Safari/Firefox
+            scrub: true,
             invalidateOnRefresh: true,
           },
           autoAlpha: 0,
           opacity: 0,
           rotate: 0,
-          // Remove blur filter for Safari/Firefox as it's performance intensive
           ...(isSafariOrFirefox ? {} : { filter: "blur(2px)" }),
           y: 50,
           duration: 1.5,
@@ -102,7 +117,6 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
           },
           autoAlpha: 0,
           opacity: 0,
-          // Remove blur filter for Safari/Firefox as it's performance intensive
           ...(isSafariOrFirefox ? {} : { filter: "blur(2px)" }),
           y: 50,
           rotate: 0,
@@ -153,7 +167,7 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
     )
 
 
-  })
+  }, [pathname])
 
   const windowSize = useWindowSize()
   useLayoutEffect(() => {
@@ -161,15 +175,18 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
 
     const existing = ScrollSmoother.get();
     if (existing) existing.kill();
-    console.log(windowSize.width)
+    // console.log(windowSize.width)
     const smoother = ScrollSmoother.create({
       smooth: (windowSize.width ? windowSize.width : 900) < 650 ? 0 : 1,
       effects: true,
       normalizeScroll: true,
     });
 
+    // Enable data-speed / data-lag parallax effects (used by Starfield, Photos).
+    smoother.effects("[data-speed]");
+
     return () => smoother.kill();
-  }, [windowSize]);
+  }, [windowSize, pathname]);
   return (
     <div id="smooth-wrapper">
       {fixed}

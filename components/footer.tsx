@@ -8,7 +8,7 @@ export default function Footer() {
         built & designed by yours truly.
       </div>
       <div className="text-white text-center text-xs w-1/4 md:text-sm self-center md:w-1/2 hidden md:inline font-space">
-        thank you for visiting! designed and programmed by yours truly. built with next.js and tailwind css :)
+        thank you for visiting! designed and programmed by yours truly. built with next.js, react, gsap, and tailwind css :)
       </div>
 
     </div>
