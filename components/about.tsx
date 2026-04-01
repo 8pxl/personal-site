@@ -7,7 +7,7 @@ export default function About() {
           01. ABOUT
         </div>
         <div suppressHydrationWarning data-gsap="" className="fade-up-s about-text text-justify">
-          I've spent more than half of my life designing, building, and programming awesome robots. Combining (sometimes questionable) code and sketchy wiring to create something that actually <em>exists</em> in the real world is beyond captivating to me. I'm especially excited about the intersection between robotics and artificial intelligence, where emerging technologies like VLA's are actively changing how we think about robotics.
+          I've spent more than half of my life designing, building, and programming awesome robots. Combining (sometimes questionable) code and sketchy wiring to create something that actually <em>exists</em> in the real world is beyond captivating to me. I'm especially excited about the intersection between robotics and artificial intelligence, where emerging technologies like VLA's are actively changing how we think about robotics. I want to spend my career working on the things that I'm passionate about. I want to found my own company, and am hoping to kick this off by getting into the YC summer 2026 batch!
         </div>
 
         <div className="w-full flex justify-center">
