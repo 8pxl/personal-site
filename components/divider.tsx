@@ -4,7 +4,7 @@ export default function Divider() {
       <div className="font-mono">
         +
       </div>
-      <div className="bg-white self-center w-full h-[1px] min-h-[1px] animLine">
+      <div suppressHydrationWarning className="bg-white self-center w-full h-[1px] min-h-[1px] animLine">
         {/* Safari requires a minimum height of 1px to render consistently */}
       </div>
       <div className="font-mono">
