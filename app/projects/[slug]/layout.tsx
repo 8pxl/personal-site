@@ -17,6 +17,7 @@ export default async function ProjectLayout({
     <ProjectTemplate
       title={project.title}
       videoSrc={project.videoSrc}
+      imageSrc={project.imageSrc}
       externalLink={project.externalLink}
     >
       {children}
