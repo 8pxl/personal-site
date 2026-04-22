@@ -1,0 +1,179 @@
+Here’s a completed version with your missing parts filled in, keeping your tone and not overexplaining:
+
+---
+
+import Image from "next/image";
+
+# ECE discovery project
+
+## Section 1: Initial Idea
+
+The goal was to design and build a small, autonomously controlled differential drive robot car from the ground up. This project served as an introduction to integrating microcontrollers with physical hardware and power systems.
+
+### Required Materials
+
+* **2x 12VDC Motors**: For the differential drive system.
+* **Raspberry Pi**: The brain of the operation, handling autonomous logic.
+* **H-Bridge Motor Controller**: To interface the low-voltage RPi signals with the high-voltage motors.
+* **USB-C Breakout**: For clean power delivery to the Raspberry Pi.
+
+### Manufacturing
+
+The entire chassis was designed for **3D printing**, allowing for rapid prototyping and custom internal mounting points.
+
+## Section 2: CAD Modelling
+
+The design followed a **clamshell approach**, with the goal of packaging all electronics, including the Raspberry Pi, motor controller, and wiring, securely within the chassis for a clean, professional look.
+
+<Image src="/discovery/sketch.jpg" width={800} height={600} alt="Initial Sketch" className="rounded-lg object-cover w-full" />
+
+This was the initial sketch for the chassis, I wanted to make the robot as compact as possible, so the robot dimensions are on the smaller side
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
+  <Image src="/discovery/progress.jpg" width={800} height={600} alt="Development Progress" className="rounded-lg object-cover w-full h-64" />
+  <Image src="/discovery/progress1.jpg" width={800} height={600} alt="Progress" className="rounded-lg object-cover w-full h-64" />
+</div>
+
+
+
+I measured the components that the robot would use and packaged it in the CAD, ensuring that the assembly process would go smoothly. During this stage, I also added screws to secure all the electronics.
+
+<div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 my-8">
+  <Image src="/discovery/top cover.jpg" width={800} height={600} alt="Top Cover CAD" className="rounded-lg object-cover w-full h-64" />
+  <Image src="/discovery/marble attatched.jpg" width={800} height={600} alt="Base CAD" className="rounded-lg object-cover w-full h-64" />
+  <Image src="/discovery/assem .jpg" width={800} height={600} alt="Assembly" className="rounded-lg object-cover w-full h-64" />
+</div>
+
+Some smaller details, like the marble at the front of the robot and the top cover with custom slots to snap together with the bottom section.
+
+  <Image src="/discovery/first finished.jpg" width={800} height={600} alt="First Prototype" className="rounded-lg object-cover w-full" />
+The final chassis design, with center struts to elevate the battery, and small standoffs to mount the motor controller and Raspberry Pi.
+
+## Section 3: Assembling Physical Design
+
+The assembly process revealed several critical engineering challenges that required on-the-fly modifications.
+
+### Key Issues & Solutions
+
+**GPIO Clearance**: Forgot to account for the height of the GPIO pins and cables when designing the top cover, requiring chassis adjustments as the original design was too short
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+  <Image src="/discovery/IMG_5435.jpeg" width={800} height={600} alt="Discovery" className="rounded-lg object-cover w-full h-64" />
+  <Image src="/discovery/IMG_5404.jpeg" width={800} height={600} alt="Discovery" className="rounded-lg object-cover w-full h-64" />
+</div>
+
+The old design compared to the new design, notice how the top section is raised higher to account for the extra height.
+
+<div className="my-8"></div>
+
+**Voltage Management**: Initially overlooked the necessity of managing 12V for motors vs 5V for the RPi, leading to a more complex power distribution system.
+
+  <Image src="/discovery/IMG_5443.jpeg" width={800} height={600} alt="Discovery" className="rounded-lg object-cover w-full" />
+
+The full power distribution system can be seen here: the 11.1V LiPo feeds directly into the motor controller for the motors, while also stepping down through a buck converter to 5V to power the Raspberry Pi through a USB-C breakout. All grounds are tied together through a central node to maintain a common reference between the Pi and the motor driver.
+
+* **Grounding Loops**: Encountered issues with grounding everything together across different power rails. Initially, I treated different terminals as implicitly connected, which caused inconsistent behavior and made debugging difficult.
+* **Custom Bus Bar**: To resolve the grounding and power distribution issues, I made a custom bus bar to centralize connections. This allowed all grounds (battery, motor driver, and Raspberry Pi) to share a single reference point without forcing high motor current through thin signal wires.
+
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+  <Image src="/discovery/IMG_5445.jpeg" width={800} height={600} alt="Discovery" className="rounded-lg object-cover w-full h-64" />
+  <Image src="/discovery/IMG_5424.jpeg" width={800} height={600} alt="Discovery" className="rounded-lg object-cover w-full h-64" />
+</div>
+
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-8">
+  <Image src="/discovery/IMG_5455.jpeg" width={800} height={600} alt="Final Assembly" className="rounded-lg object-cover w-full h-64" />
+  <Image src="/discovery/IMG_5454.jpeg" width={800} height={600} alt="Internal Wiring" className="rounded-lg object-cover w-full h-64" />
+  <Image src="/discovery/IMG_5453.jpeg" width={800} height={600} alt="Side View" className="rounded-lg object-cover w-full h-64" />
+  <Image src="/discovery/IMG_5451.jpeg" width={800} height={600} alt="Rear View" className="rounded-lg object-cover w-full h-64" />
+  <Image src="/discovery/IMG_5448.jpeg" width={800} height={600} alt="Detail View" className="rounded-lg object-cover w-full h-64" />
+</div>
+
+
+## Software Implementation
+
+To control the robot, I developed a Python-based drivetrain controller that handles motor PWM signals and implements basic trapezoidal velocity profiling for smooth movement.
+
+### `drivetrain.py`
+```python
+import RPi.GPIO as GPIO
+import time
+from typing import NamedTuple
+
+
+class MotorPins(NamedTuple):
+    enable: int
+    in1: int
+    in2: int
+
+
+class Drivetrain:
+    def __init__(self, leftPins: MotorPins, rightPins: MotorPins, ldir: int, rdir: int) -> None:
+        self.left: MotorPins = leftPins
+        self.right: MotorPins = rightPins
+        self.pwmA: GPIO.PWM = GPIO.PWM(self.left.enable, 1000)
+        self.pwmB: GPIO.PWM = GPIO.PWM(self.right.enable, 1000)
+        self.ldir: int = ldir
+        self.rdir: int = rdir
+        self.pwmA.start(0)
+        self.pwmB.start(0)
+        
+
+    def spin(self, speeds: tuple[float, float]) -> None:
+        ldir = bool((1 if speeds[0] > 0  else 0) * self.ldir)
+        rdir = bool((1 if speeds[1] > 0  else 0) * self.rdir)
+        GPIO.output(self.left.in1, ldir)
+        GPIO.output(self.left.in2, ldir)
+        GPIO.output(self.right.in1, rdir)
+        GPIO.output(self.right.in2, rdir)
+        self.pwmA.ChangeDutyCycle(speeds[0])
+        self.pwmB.ChangeDutyCycle(speeds[1])
+
+    #drive train controller truncated
+```
+
+### `main.py`
+```python
+from drivetrain import *
+import time
+
+
+ENA = 17
+IN1 = 27
+IN2 = 22
+
+ENB = 23
+IN3 = 24
+IN4 = 25
+BUTTON_PIN = 17
+
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(BUTTON_PIN, GPIO.IN)
+
+
+dt = Drivetrain(
+    MotorPins(ENA, IN1, IN2),
+    MotorPins(ENB,IN3,IN4),
+    1,
+    1
+)
+
+dtc = DrivetrainController(dt)
+
+def run(channel):
+    dtc.profiled_drive(1000)
+
+try:
+    GPIO.add_event_detect(
+        BUTTON_PIN,
+        GPIO.FALLING,
+        callback = run,
+        bouncetime = 200
+    )
+    while True:
+        time.sleep(0.01)
+finally:
+    dt.spin((0,0))
+    GPIO.cleanup()
+```

@@ -4,11 +4,13 @@ import { notFound } from "next/navigation";
 import VexBody from "@/app/projects/_content/vex.mdx";
 import MarsBody from "@/app/projects/_content/mars.mdx";
 import KeejlibBody from "@/app/projects/_content/keejlib.mdx";
+import DiscoveryBody from "@/app/projects/_content/discovery.mdx";
 
 const bodies = {
   vex: VexBody,
   mars: MarsBody,
   keejlib: KeejlibBody,
+  discovery: DiscoveryBody,
 } as const;
 
 export function generateStaticParams() {

@@ -1,17 +1,27 @@
 import { Link as TransitionLink } from "next-transition-router";
 import WorkVideo from "@/components/media/WorkVideo";
+import Image from "next/image";
 interface WorkProp {
   name: string;
   page: string;
-  src: string;
+  src?: string;
+  image?: string;
   link: string;
   desc: string;
   left: boolean;
 }
-export function Work({ name, page, src, link, desc, left }: WorkProp) {
+export function Work({ name, page, src, image, link, desc, left }: WorkProp) {
   // onClick={() => window.open(src, "_blank")}
   // <a target="_blank" href={link}></a>
-  const video = <WorkVideo src={src} left={left} href={link} />
+  const media = src ? (
+    <WorkVideo src={src} left={left} href={link} />
+  ) : image ? (
+    <TransitionLink href={"/projects/" + page}>
+      <div className="relative w-full aspect-video rounded-xl overflow-hidden hover:scale-[1.02] duration-500 ease-in-out">
+        <Image src={image} alt={name} fill className="object-cover" />
+      </div>
+    </TransitionLink>
+  ) : null;
   const text = (
     <div className="flex flex-col justify-between gap-3 md:w-[23%] md:justify-start lg:gap-10 z-1">
       <div className="font-bold">
@@ -30,7 +40,7 @@ export function Work({ name, page, src, link, desc, left }: WorkProp) {
   return (
     <div suppressHydrationWarning className="flex flex-col md:flex-row gap-2 fade-up-s">
       <div className={"w-full md:w-[77%] " + (left ? "md:order-1" : "")}>
-        {video}
+        {media}
       </div>
 
       {text}
@@ -79,6 +89,14 @@ export default function Works() {
             link="https://github.com/8pxl/keejLib"
             desc="KeejLib is an open-source PROS library for VEX competition robots. It has algorithms for moving robots using Pure Pursuit, motion profiling, and PID control. It is a beginner friendly yet powerful system for developing autonomous routines."
             left={false}
+          />
+          <Work
+            name="ECE Discovery Project"
+            page="discovery"
+            image="/discovery/IMG_5453.jpeg"
+            link="/projects/discovery"
+            desc="A custom designed small differential-drive robot"
+            left={true}
           />
           <div className="relative h-[90vh] justify-centers mt-[10vh]">
             <div className="absolute top-0 left-0">

@@ -1,9 +1,10 @@
-export type ProjectSlug = "vex" | "mars" | "keejlib";
+export type ProjectSlug = "vex" | "mars" | "keejlib" | "discovery";
 
 export type Project = {
   slug: ProjectSlug;
   title: string;
-  videoSrc: string;
+  videoSrc?: string;
+  imageSrc?: string;
   externalLink: string;
 };
 
@@ -25,6 +26,12 @@ export const projects: Project[] = [
     title: "KeejLib",
     videoSrc: "/assets/keejlib.mp4",
     externalLink: "https://github.com/8pxl/keejLib",
+  },
+  {
+    slug: "discovery",
+    title: "ECE discovery project",
+    imageSrc: "/discovery/IMG_5453.jpeg",
+    externalLink: "/projects/discovery",
   },
 ];
 

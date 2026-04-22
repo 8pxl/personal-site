@@ -1,9 +1,11 @@
 import { Link as TransitionLink } from "next-transition-router";
 import WorkVideo from "@/components/media/WorkVideo";
+import Image from "next/image";
 
 type Props = {
   title: string;
-  videoSrc: string;
+  videoSrc?: string;
+  imageSrc?: string;
   externalLink?: string;
   children: React.ReactNode;
 };
@@ -11,6 +13,7 @@ type Props = {
 export default function ProjectTemplate({
   title,
   videoSrc,
+  imageSrc,
   externalLink,
   children,
 }: Props) {
@@ -28,7 +31,18 @@ export default function ProjectTemplate({
         </div>
 
         <div className="flex flex-col gap-3">
-          <WorkVideo src={videoSrc} href={externalLink} />
+          {videoSrc ? (
+            <WorkVideo src={videoSrc} href={externalLink} />
+          ) : imageSrc ? (
+            <div className="relative w-full aspect-video rounded-xl overflow-hidden">
+              <Image 
+                src={imageSrc} 
+                alt={title} 
+                fill 
+                className="object-cover"
+              />
+            </div>
+          ) : null}
         </div>
 
         <div className="mt-2">{children}</div>
