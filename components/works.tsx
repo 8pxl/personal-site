@@ -52,8 +52,14 @@ interface SiteLink {
 }
 export function SiteLink({ name, link }: SiteLink) {
   return (
-    <div className="text-6xl md:text-8xl lg:text-9xl text-center tracking-tighter hover:tracking-wider duration-500 italic underline hover:text-red-300 hover:scale-110 hover:rotate-[1.5deg]">
-      <a target="_blank" href={link}>{name}</a>
+    <div className="text-6xl md:text-8xl lg:text-9xl text-center italic">
+      <a
+        target="_blank"
+        href={link}
+        className="inline-block tracking-tighter underline duration-500 ease-in-out hover:tracking-wider hover:text-red-300 hover:scale-110 hover:rotate-[1.5deg]"
+      >
+        {name}
+      </a>
     </div>
   )
 }
@@ -89,14 +95,6 @@ export default function Works() {
             link="https://github.com/8pxl/keejLib"
             desc="KeejLib is an open-source PROS library for VEX competition robots. It has algorithms for moving robots using Pure Pursuit, motion profiling, and PID control. It is a beginner friendly yet powerful system for developing autonomous routines."
             left={false}
-          />
-          <Work
-            name="ECE Discovery Project"
-            page="discovery"
-            image="/discovery/IMG_5453.jpeg"
-            link="/projects/discovery"
-            desc="A custom designed small differential-drive robot"
-            left={true}
           />
           <div className="relative h-[90vh] justify-centers mt-[10vh]">
             <div className="absolute top-0 left-0">

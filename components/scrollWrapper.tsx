@@ -39,7 +39,28 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
     applySmooth();
     mq.addEventListener("change", applySmooth);
 
+    // Recalibrate whenever the content's real size changes. Page content can
+    // land AFTER the per-route pass runs (Next streams it into the loading.tsx
+    // Suspense boundary), and images/fonts settle later still — without this,
+    // parallax effects calibrate against a zero-height page and stay dead.
+    const content = document.getElementById("smooth-content");
+    let recalTimer = 0;
+    const recalibrate = () => {
+      window.clearTimeout(recalTimer);
+      recalTimer = window.setTimeout(() => {
+        const targets = gsap.utils.toArray<HTMLElement>("[data-speed]");
+        if (targets.length > 0) {
+          smoother.effects(targets);
+        }
+        ScrollTrigger.refresh();
+      }, 150);
+    };
+    const ro = new ResizeObserver(recalibrate);
+    if (content) ro.observe(content);
+
     return () => {
+      ro.disconnect();
+      window.clearTimeout(recalTimer);
       mq.removeEventListener("change", applySmooth);
       smoother.kill();
     };
@@ -153,17 +174,22 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
 
     // Rebuild parallax effects for whatever data-speed elements the new page
     // has. effects() replaces per-element, but killing first also drops
-    // triggers whose elements left the DOM with the previous page.
-    if (smoother) {
-      smoother.effects().forEach((st) => st.kill());
-      const effectTargets = gsap.utils.toArray<HTMLElement>("[data-speed]");
-      if (effectTargets.length > 0) {
-        smoother.effects(effectTargets);
+    // triggers whose elements left the DOM with the previous page. Deferred a
+    // frame: at commit time the fresh DOM can still measure zero scrollHeight,
+    // which would calibrate the clamp() ranges (and trigger positions) to
+    // nothing. The rAF refresh recalibrates everything against real layout.
+    const rafId = window.requestAnimationFrame(() => {
+      if (smoother) {
+        smoother.effects().forEach((st) => st.kill());
+        const effectTargets = gsap.utils.toArray<HTMLElement>("[data-speed]");
+        if (effectTargets.length > 0) {
+          smoother.effects(effectTargets);
+        }
       }
-    }
-    ScrollTrigger.refresh();
-
+      ScrollTrigger.refresh();
+    });
     return () => {
+      window.cancelAnimationFrame(rafId);
       mm.revert();
     };
   }, { dependencies: [pathname], revertOnUpdate: true })
