@@ -56,7 +56,7 @@ export function SiteLink({ name, link }: SiteLink) {
       <a
         target="_blank"
         href={link}
-        className="inline-block tracking-tighter underline duration-500 ease-in-out hover:tracking-wider hover:text-red-300 hover:scale-110 hover:rotate-[1.5deg]"
+        className="inline-block tracking-tighter underline duration-500 ease-in-out hover:text-red-300 hover:scale-x-115 hover:scale-y-105 hover:rotate-[1.5deg]"
       >
         {name}
       </a>
