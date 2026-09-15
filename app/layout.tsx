@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import "@/components/providers"
 import "./globals.css";
 import Providers from "@/components/providers";
 import Tabbar from "@/components/tabbar";

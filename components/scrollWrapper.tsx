@@ -3,11 +3,10 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { useGSAP } from "@gsap/react";
-import { useLayoutEffect, JSX } from "react";
-import { useWindowSize } from "@uidotdev/usehooks";
-import { SplitText } from "gsap/SplitText";
+import { useLayoutEffect, useRef, JSX } from "react";
 import { AnimSelector } from "@/util/anims";
 import { usePathname } from "next/navigation";
+import { useTransitionState } from "next-transition-router";
 
 
 interface scrollWrapperProps {
@@ -16,96 +15,58 @@ interface scrollWrapperProps {
 }
 export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
   const pathname = usePathname();
+  // Mirrored into a ref so the per-path pass can read the stage at run time
+  // without re-running when it changes.
+  const { stage } = useTransitionState();
+  const stageRef = useRef(stage);
+  stageRef.current = stage;
+
+  // The ScrollSmoother lives for the whole app session. It is NOT recreated on
+  // navigation or resize: ScrollTrigger already refreshes itself on resize, and
+  // the smooth value is adjusted in place via smoother.smooth() below.
+  useLayoutEffect(() => {
+    gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+
+    ScrollSmoother.get()?.kill();
+    const smoother = ScrollSmoother.create({
+      smooth: window.innerWidth < 650 ? 0 : 1,
+      effects: false,
+      normalizeScroll: true,
+    });
+
+    const mq = window.matchMedia("(max-width: 649px)");
+    const applySmooth = () => smoother.smooth(mq.matches ? 0 : 1);
+    applySmooth();
+    mq.addEventListener("change", applySmooth);
+
+    return () => {
+      mq.removeEventListener("change", applySmooth);
+      smoother.kill();
+    };
+  }, []);
+
+  // Per-page pass, runs at DOM commit for every navigation (and once on load):
+  // reset scroll -> unhide pre-hidden content -> build scroll triggers ->
+  // (re)apply data-speed parallax effects -> single refresh.
   useGSAP(() => {
-    gsap.registerPlugin(ScrollTrigger, SplitText);
+    gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+    const smoother = ScrollSmoother.get();
 
-    // Ensure newly navigated content isn't stuck hidden.
-    // We keep `[data-gsap] { visibility: hidden; }` in CSS to prevent flashes,
-    // but on route transitions the animation pass can miss elements.
-    gsap.set("#smooth-content [data-gsap]", { visibility: "inherit" });
+    // Deterministic scroll position before anything measures the new page —
+    // but only for wipe navigations (stage is "leaving" when this commit runs
+    // mid-transition). Initial load, refresh, and browser back/forward all
+    // arrive with stage "none" and keep the browser's scroll restoration.
+    if (smoother && stageRef.current !== "none") {
+      smoother.scrollTo(0, false);
+    }
 
-    //opacity
-    const introDir = 1.5;
-    const delayDir = 0.7;
+    // `[data-gsap] { visibility: hidden; }` in CSS prevents flashes before
+    // hydration; un-hide everywhere (fixed chrome lives outside #smooth-content).
+    const dataGsapTargets = gsap.utils.toArray<HTMLElement>("[data-gsap]");
+    if (dataGsapTargets.length > 0) {
+      gsap.set(dataGsapTargets, { visibility: "inherit" });
+    }
 
-    gsap.utils.toArray<HTMLElement>(AnimSelector.Fade)
-      .forEach((elem: HTMLElement) => {
-        gsap.from(
-          elem, {
-          autoAlpha: 0,
-          duration: introDir,
-          ease: "power3.inOut",
-          opacity: 0,
-          delay: delayDir - 0.3,
-
-        }
-        )
-      });
-    gsap.from(
-      AnimSelector.SlideDown,
-      {
-        delay: delayDir,
-        duration: introDir,
-        ease: "power3.out",
-        y: -150
-      }
-    )
-    gsap.from(
-      AnimSelector.SlideUp,
-      {
-        duration: introDir,
-        delay: delayDir,
-        ease: "power3.out",
-        y: 150,
-      }
-    );
-    let split: SplitText | null = null;
-    let rafId = 0;
-    let tries = 0;
-
-    const initSplit = () => {
-      const targets = gsap.utils.toArray<HTMLElement>(
-        '[data-gsap="line3"], [data-gsap="line2"]'
-      );
-      if (targets.length === 0) return false;
-
-      // Revert any previous split before re-splitting.
-      split?.revert();
-      split = SplitText.create(targets, {
-        type: "chars",
-        autoSplit: true,
-      });
-
-      if (!split.chars || split.chars.length === 0) {
-        split.revert();
-        split = null;
-        return false;
-      }
-
-      gsap.from(split.chars, {
-        duration: introDir / 1.8,
-        delay: delayDir,
-        x: 190,
-        autoAlpha: 0,
-        opacity: 0,
-        stagger: 0.03,
-      });
-
-      return true;
-    };
-
-    // On initial load + transition navigations, the hero DOM can land a tick later.
-    // Retry a few frames so SplitText sees the real nodes.
-    const attempt = () => {
-      if (initSplit()) return;
-      tries += 1;
-      if (tries >= 12) {
-        gsap.set('[data-gsap="line2"], [data-gsap="line3"]', { autoAlpha: 1, opacity: 1 });
-        return;
-      }
-      rafId = requestAnimationFrame(attempt);
-    };
-    rafId = requestAnimationFrame(attempt);
     const mm = gsap.matchMedia();
 
     // Browser detection for performance optimization
@@ -129,7 +90,6 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
           duration: 1.5,
         });
       });
-      ScrollTrigger.refresh();
     });
     mm.add("(min-width: 768px)", () => {
       gsap.utils.toArray<HTMLElement>(AnimSelector.FadeUpScroll).forEach((elem) => {
@@ -149,9 +109,7 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
           duration: 2,
         });
       });
-      ScrollTrigger.refresh();
-    }
-    );
+    });
 
     const dividers = gsap.utils.toArray<HTMLElement>('.animLine')
     dividers.forEach((divider: HTMLElement) => {
@@ -171,11 +129,12 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
       )
     });
 
-    gsap.from(
-      '.aboutImage',
-      {
+    const aboutImages = gsap.utils.toArray<HTMLElement>('.aboutImage');
+    const aboutImageWrapper = document.querySelector<HTMLElement>('.about-image-wrapper');
+    if (aboutImages.length > 0 && aboutImageWrapper) {
+      gsap.from(aboutImages, {
         scrollTrigger: {
-          trigger: '.about-image-wrapper',
+          trigger: aboutImageWrapper,
           start: "top 85%",
           end: "+=380",
           // markers: true,
@@ -189,34 +148,65 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
         top: 0,
         // left:0,
         rotateX: 90,
+      });
+    }
+
+    // Rebuild parallax effects for whatever data-speed elements the new page
+    // has. effects() replaces per-element, but killing first also drops
+    // triggers whose elements left the DOM with the previous page.
+    if (smoother) {
+      smoother.effects().forEach((st) => st.kill());
+      const effectTargets = gsap.utils.toArray<HTMLElement>("[data-speed]");
+      if (effectTargets.length > 0) {
+        smoother.effects(effectTargets);
       }
-    )
+    }
+    ScrollTrigger.refresh();
 
     return () => {
       mm.revert();
-      if (rafId) cancelAnimationFrame(rafId);
-      split?.revert();
     };
-  }, [pathname])
+  }, { dependencies: [pathname], revertOnUpdate: true })
 
-  const windowSize = useWindowSize()
-  useLayoutEffect(() => {
-    gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+  // Intro for the fixed chrome (tabbar, socials, email, resume link). Those
+  // elements persist across navigations, so this plays exactly once per
+  // session instead of replaying behind the transition overlay on every route.
+  useGSAP(() => {
+    const introDir = 1.5;
+    const delayDir = 0.7;
 
-    const existing = ScrollSmoother.get();
-    if (existing) existing.kill();
-    // console.log(windowSize.width)
-    const smoother = ScrollSmoother.create({
-      smooth: (windowSize.width ? windowSize.width : 900) < 650 ? 0 : 1,
-      effects: true,
-      normalizeScroll: true,
-    });
+    gsap.utils.toArray<HTMLElement>(AnimSelector.Fade)
+      .forEach((elem: HTMLElement) => {
+        gsap.from(elem, {
+          autoAlpha: 0,
+          duration: introDir,
+          ease: "power3.inOut",
+          opacity: 0,
+          delay: delayDir - 0.3,
+        })
+      });
 
-    // Enable data-speed / data-lag parallax effects (used by Starfield, Photos).
-    smoother.effects("[data-speed]");
+    const slideDownTargets = gsap.utils.toArray<HTMLElement>(AnimSelector.SlideDown);
+    if (slideDownTargets.length > 0) {
+      gsap.from(slideDownTargets, {
+        delay: delayDir,
+        duration: introDir,
+        ease: "power3.out",
+        y: -150
+      });
+    }
 
-    return () => smoother.kill();
-  }, [windowSize, pathname]);
+    const slideUpTargets = gsap.utils.toArray<HTMLElement>(AnimSelector.SlideUp);
+    if (slideUpTargets.length > 0) {
+      gsap.from(slideUpTargets, {
+        duration: introDir,
+        delay: delayDir,
+        ease: "power3.out",
+        y: 150,
+      });
+    }
+  }, [])
+
   return (
     <div id="smooth-wrapper">
       {fixed}

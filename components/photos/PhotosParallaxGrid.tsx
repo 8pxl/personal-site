@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 import type { Photo } from "./photosManifest";
 
 type Column = {
@@ -28,54 +28,17 @@ function distributePhotos(photos: Photo[], columnsCount: number): Photo[][] {
   return cols.map((c) => c.items);
 }
 
-export default function PhotosParallaxGrid({ photos }: { photos: Photo[] }) {
-  const rootRef = useRef<HTMLDivElement>(null);
+// clamp() speeds make ScrollSmoother start in-viewport elements at their
+// natural position at scroll 0, so the columns are aligned on load with no
+// manual compensation; parallax diverges as you scroll.
+const COLUMN_SPEEDS = ["clamp(0.85)", "clamp(1.1)", "clamp(1.35)"];
+const COLUMN_VISIBILITY = ["", "hidden md:block", "hidden lg:block"];
 
+export default function PhotosParallaxGrid({ photos }: { photos: Photo[] }) {
   const columns = useMemo(() => distributePhotos(photos, 3), [photos]);
 
-  // ScrollSmoother effects apply a translate to elements with data-speed.
-  // That means columns can start at different visual Y positions. We want them
-  // aligned at the very top initially, then let parallax diverge after.
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-
-    const align = () => {
-      const wraps = Array.from(
-        root.querySelectorAll<HTMLElement>("[data-photo-col-wrap]")
-      ).filter((el) => el.offsetParent !== null);
-
-      const inners = wraps
-        .map((wrap) => wrap.querySelector<HTMLElement>("[data-photo-col-inner]"))
-        .filter((el): el is HTMLElement => el !== null && el.offsetParent !== null);
-
-      if (inners.length <= 1) return;
-
-      const tops = inners.map((el) => el.getBoundingClientRect().top);
-      const refTop = Math.min(...tops);
-
-      for (let i = 0; i < wraps.length; i++) {
-        const inner = inners[i];
-        if (!inner) continue;
-        const delta = inner.getBoundingClientRect().top - refTop;
-        wraps[i].style.transform = `translateY(${-Math.round(delta) + 240}px)`;
-      }
-    };
-
-    // Wait a tick so ScrollSmoother can apply its initial transforms.
-    const raf1 = window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(align);
-    });
-
-    window.addEventListener("resize", align);
-    return () => {
-      window.cancelAnimationFrame(raf1);
-      window.removeEventListener("resize", align);
-    };
-  }, [photos.length]);
-
   return (
-    <div ref={rootRef} className="w-full">
+    <div className="w-full">
       <div className="mx-auto w-[min(1200px,92vw)] pt-16 pb-24">
         <div className="mb-10 flex items-end justify-between gap-6 font-js text-white">
           <div className="text-3xl md:text-4xl lg:text-5xl italic">photos</div>
@@ -83,92 +46,35 @@ export default function PhotosParallaxGrid({ photos }: { photos: Photo[] }) {
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <div data-photo-col-wrap className="will-change-transform">
-            <div
-              data-photo-col-inner
-              data-speed="0.85"
-              data-lag="0"
-              suppressHydrationWarning
-              className="flex flex-col gap-6"
-            >
-              {columns[0]?.map((p) => (
-                <figure
-                  key={p.src}
-                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black/20"
-                  style={{ aspectRatio: `${p.width}/${p.height}` }}
-                >
-                  <Image
-                    src={p.src}
-                    alt={p.alt}
-                    fill
-                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 92vw"
-                    className="object-cover transition-transform duration-700 will-change-transform group-hover:scale-[1.03]"
-                  />
-                  <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
-                  </div>
-                </figure>
-              ))}
+          {columns.map((column, i) => (
+            <div key={i} className={COLUMN_VISIBILITY[i]}>
+              <div
+                data-speed={COLUMN_SPEEDS[i]}
+                data-lag="0"
+                suppressHydrationWarning
+                className="flex flex-col gap-6 will-change-transform"
+              >
+                {column.map((p) => (
+                  <figure
+                    key={p.src}
+                    className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black/20"
+                    style={{ aspectRatio: `${p.width}/${p.height}` }}
+                  >
+                    <Image
+                      src={p.src}
+                      alt={p.alt}
+                      fill
+                      sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 92vw"
+                      className="object-cover transition-transform duration-700 will-change-transform group-hover:scale-[1.03]"
+                    />
+                    <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
+                    </div>
+                  </figure>
+                ))}
+              </div>
             </div>
-          </div>
-
-          <div data-photo-col-wrap className="hidden will-change-transform md:block">
-            <div
-              data-photo-col-inner
-              data-speed="1.1"
-              data-lag="0"
-              suppressHydrationWarning
-              className="flex flex-col gap-6"
-            >
-              {columns[1]?.map((p) => (
-                <figure
-                  key={p.src}
-                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black/20"
-                  style={{ aspectRatio: `${p.width}/${p.height}` }}
-                >
-                  <Image
-                    src={p.src}
-                    alt={p.alt}
-                    fill
-                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 92vw"
-                    className="object-cover transition-transform duration-700 will-change-transform group-hover:scale-[1.03]"
-                  />
-                  <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
-                  </div>
-                </figure>
-              ))}
-            </div>
-          </div>
-
-          <div data-photo-col-wrap className="hidden will-change-transform lg:block">
-            <div
-              data-photo-col-inner
-              data-speed="1.35"
-              data-lag="0"
-              suppressHydrationWarning
-              className="flex flex-col gap-6"
-            >
-              {columns[2]?.map((p) => (
-                <figure
-                  key={p.src}
-                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black/20"
-                  style={{ aspectRatio: `${p.width}/${p.height}` }}
-                >
-                  <Image
-                    src={p.src}
-                    alt={p.alt}
-                    fill
-                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 92vw"
-                    className="object-cover transition-transform duration-700 will-change-transform group-hover:scale-[1.03]"
-                  />
-                  <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
-                  </div>
-                </figure>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
 
         {photos.length === 0 ? (
