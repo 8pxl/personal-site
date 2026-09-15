@@ -30,7 +30,10 @@ export default function Hero() {
   }, { scope: rootRef });
 
   useLayoutEffect(() => {
-    if (stage !== "none") return;
+    // Play during "entering" too: the enter wipe reveals the page over ~1.4s,
+    // and waiting for it to fully finish ("none") left the hero sitting empty
+    // long after the reveal started.
+    if (stage === "leaving") return;
     // Guard on the element state rather than a ref: refs survive StrictMode's
     // simulated remount while the useGSAP hide above is re-applied, which
     // would strand the hero invisible in dev with a ref-based "played" flag.
