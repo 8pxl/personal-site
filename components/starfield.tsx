@@ -1,5 +1,6 @@
 "use client"
 import { gsap } from "gsap";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { CSSProperties, useMemo } from "react";
 import { useGSAP } from '@gsap/react';
 import { useWindowSize } from "@uidotdev/usehooks"
@@ -32,15 +33,18 @@ export default function Starfield({ height }: StarfieldProps) {
   const browserReduceFactor = /^((?!chrome|android).)*safari|firefox/i.test(navigator.userAgent) ? 1.5 : 1;
   const numStars = Math.floor((windowWidth * height) / (9000 * browserReduceFactor));
   useGSAP(() => {
-    gsap.from(
-      '.star',
-      {
+    const stars = gsap.utils.toArray<HTMLElement>('.star');
+    if (stars.length > 0) {
+      gsap.from(stars, {
         duration: 1,
         delay: 0.2,
         ease: "power1.in",
         opacity: 0,
-      }
-    )
+      });
+      // Stars mount a render after the ScrollWrapper applies its data-speed
+      // effects (window size isn't known until then), so hook them up here.
+      ScrollSmoother.get()?.effects(stars);
+    }
   }, [numStars])
   const stars = useMemo(
     () => {
