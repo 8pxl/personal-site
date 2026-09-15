@@ -13,7 +13,7 @@ export default function About() {
         <div className="w-full flex justify-center">
           <div className="about-image-wrapper w-full md:w-[50vw] lg:w-[45vw] relative mt-6 z-1 aspect-square mb-6">
             <Image suppressHydrationWarning alt='photo of handsome man' width={800} height={600} loading="eager" src="/assets/about1.jpeg" className="aboutImage absolute left-0" />
-            <Image suppressHydrationWarning alt='photo of handsome man' width={800} height={600} loading="eager" src="/assets/about2.jpeg" className="aboutImage absolute top-[31.3%] left-[50%] z-2 -translate-x-1/2" />
+            <Image suppressHydrationWarning alt='photo of handsome man' width={800} height={600} loading="eager" src="/assets/aboutv2.jpeg" className="aboutImage absolute top-[31.3%] left-[50%] z-2 -translate-x-1/2" />
             <Image suppressHydrationWarning alt='photo of handsome man' width={800} height={600} loading="eager" src="/assets/about3.jpeg" className="aboutImage absolute top-[62.6%] left-[50%] z-0" />
           </div>
         </div>
