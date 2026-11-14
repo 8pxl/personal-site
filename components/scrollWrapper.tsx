@@ -19,6 +19,10 @@ interface scrollWrapperProps {
 // single refresh of their own.
 const NO_REFRESH = { refresh: false } as ScrollSmoother.EffectsVars & { refresh: boolean };
 
+// Last scroll position per route, so returning to a page lands where you left
+// it. In memory only: a reload starts fresh.
+const savedScroll = new Map<string, number>();
+
 // Brings the parallax effects in line with the current DOM: drops effects whose
 // elements left with the previous page and adds effects for new [data-speed]
 // elements. Elements that persist across routes keep theirs; the caller's
@@ -207,11 +211,17 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
     // scrollHeight, which would calibrate the clamp() ranges (and trigger
     // positions) to nothing. The single refresh recalibrates everything —
     // new and persisting effects alike — against real layout.
+    // Restoring has to wait for this refresh: scrollTo() clamps to the scroll
+    // height measured by the last one.
     const rafId = window.requestAnimationFrame(() => {
       if (smoother) syncEffects(smoother);
       ScrollTrigger.refresh();
+      const saved = savedScroll.get(pathname);
+      if (smoother && saved) smoother.scrollTo(saved, false);
     });
     return () => {
+      // Runs as the next route commits, before anything resets the scroll.
+      if (smoother) savedScroll.set(pathname, smoother.scrollTop());
       window.cancelAnimationFrame(rafId);
       mm.revert();
     };
