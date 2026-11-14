@@ -7,6 +7,14 @@ import { useGSAP } from "@gsap/react";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useTransitionState } from "next-transition-router";
 import type { Photo } from "./photosManifest";
+import PhotoLightbox from "./PhotoLightbox";
+
+type Expanded = {
+  photo: Photo;
+  source: HTMLElement;
+  thumbSrc: string;
+  trigger: HTMLButtonElement;
+};
 
 type Column = {
   items: Photo[];
@@ -56,6 +64,7 @@ export default function PhotosParallaxGrid({ photos }: { photos: Photo[] }) {
     [photos, columnCount]
   );
   const rootRef = useRef<HTMLDivElement>(null);
+  const [expanded, setExpanded] = useState<Expanded | null>(null);
   const { stage } = useTransitionState();
   // Same intro pattern as the hero: shorter delay when arriving behind the
   // enter wipe, full delay on a hard load.
@@ -202,12 +211,41 @@ export default function PhotosParallaxGrid({ photos }: { photos: Photo[] }) {
                     <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
                       <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
                     </div>
+                    <button
+                      type="button"
+                      aria-label={`Expand ${p.alt}`}
+                      className="absolute inset-0 cursor-zoom-in rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                      onClick={(e) => {
+                        const trigger = e.currentTarget;
+                        const figure = trigger.closest("figure");
+                        if (!figure) return;
+                        setExpanded({
+                          photo: p,
+                          source: figure,
+                          thumbSrc: figure.querySelector("img")?.currentSrc || p.src,
+                          trigger,
+                        });
+                      }}
+                    />
                   </figure>
                 ))}
               </div>
             </div>
           ))}
         </div>
+
+        {expanded ? (
+          <PhotoLightbox
+            key={expanded.photo.src}
+            photo={expanded.photo}
+            source={expanded.source}
+            thumbSrc={expanded.thumbSrc}
+            onClosed={() => {
+              setExpanded(null);
+              expanded.trigger.focus({ preventScroll: true });
+            }}
+          />
+        ) : null}
 
         {photos.length === 0 ? (
           <div className="mt-16 rounded-2xl border border-white/10 bg-black/20 p-6 font-js text-white/80">

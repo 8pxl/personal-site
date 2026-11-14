@@ -8,7 +8,11 @@ export default function HoverOverlay() {
   const { isHovered, hoveredRect } = useHover();
   const lastClipPath = useRef<string | undefined>(undefined);
 
-  if (hoveredRect) {
+  // Without a rect (e.g. the photo lightbox) the whole page blurs. The last
+  // path is kept otherwise so the hole doesn't vanish while fading out.
+  if (isHovered && !hoveredRect) {
+    lastClipPath.current = undefined;
+  } else if (hoveredRect) {
     lastClipPath.current = `polygon(0% 0%, 0% 100%, 100% 100%, 100% 0%, 0% 0%, ${hoveredRect.left + 1}px ${hoveredRect.top + 4}px, ${hoveredRect.right - 1}px ${hoveredRect.top + 4}px, ${hoveredRect.right - 1}px ${hoveredRect.bottom - 4}px, ${hoveredRect.left + 1}px ${hoveredRect.bottom - 4}px, ${hoveredRect.left + 1}px ${hoveredRect.top + 4}px)`;
   }
 
