@@ -4,29 +4,31 @@ import Image from "next/image";
 import gsap from "gsap";
 import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useTransitionState } from "next-transition-router";
 import type { Photo } from "./photosManifest";
 
 type Column = {
   items: Photo[];
-  totalAspect: number;
+  // Column height in units of column width (sum of height / width).
+  height: number;
 };
 
+// Greedy masonry: each photo goes to the currently shortest column. A photo's
+// rendered height scales with height / width, so that's what gets summed.
 function distributePhotos(photos: Photo[], columnsCount: number): Photo[][] {
   const cols: Column[] = Array.from({ length: columnsCount }, () => ({
     items: [],
-    totalAspect: 0,
+    height: 0,
   }));
 
   for (const p of photos) {
-    const aspect = p.width / p.height;
     let bestIndex = 0;
     for (let i = 1; i < cols.length; i++) {
-      if (cols[i].totalAspect < cols[bestIndex].totalAspect) bestIndex = i;
+      if (cols[i].height < cols[bestIndex].height) bestIndex = i;
     }
     cols[bestIndex].items.push(p);
-    cols[bestIndex].totalAspect += aspect;
+    cols[bestIndex].height += p.height / p.width;
   }
 
   return cols.map((c) => c.items);
@@ -36,10 +38,23 @@ function distributePhotos(photos: Photo[], columnsCount: number): Photo[][] {
 // natural position at scroll 0, so the columns are aligned on load with no
 // manual compensation; parallax diverges as you scroll.
 const COLUMN_SPEEDS = ["clamp(0.85)", "clamp(1.1)", "clamp(1.35)"];
-const COLUMN_VISIBILITY = ["", "hidden md:block", "hidden lg:block"];
+
+// Tailwind's md / lg breakpoints.
+function getColumnCount() {
+  if (window.matchMedia("(min-width: 64rem)").matches) return 3;
+  if (window.matchMedia("(min-width: 48rem)").matches) return 2;
+  return 1;
+}
 
 export default function PhotosParallaxGrid({ photos }: { photos: Photo[] }) {
-  const columns = useMemo(() => distributePhotos(photos, 3), [photos]);
+  // Photos are distributed across the columns that are actually visible, so
+  // the count has to come from the client. null until measured: the server
+  // renders three columns, which stay hidden (data-gsap) until the intro.
+  const [columnCount, setColumnCount] = useState<number | null>(null);
+  const columns = useMemo(
+    () => distributePhotos(photos, columnCount ?? 3),
+    [photos, columnCount]
+  );
   const rootRef = useRef<HTMLDivElement>(null);
   const { stage } = useTransitionState();
   // Same intro pattern as the hero: shorter delay when arriving behind the
@@ -60,8 +75,35 @@ export default function PhotosParallaxGrid({ photos }: { photos: Photo[] }) {
     }
   }, { scope: rootRef });
 
+  // Measured in a layout effect so the corrected layout commits before the
+  // first paint.
   useLayoutEffect(() => {
-    if (stage === "leaving") return;
+    const queries = ["(min-width: 64rem)", "(min-width: 48rem)"].map((q) => window.matchMedia(q));
+    const update = () => setColumnCount(getColumnCount());
+    update();
+    queries.forEach((mq) => mq.addEventListener("change", update));
+    return () => queries.forEach((mq) => mq.removeEventListener("change", update));
+  }, []);
+
+  // A breakpoint change after the intro moves figures into other columns,
+  // which remounts them CSS-hidden ([data-gsap]); reveal those.
+  const prevColumnCountRef = useRef(columnCount);
+  useLayoutEffect(() => {
+    const prev = prevColumnCountRef.current;
+    prevColumnCountRef.current = columnCount;
+    if (prev === null || prev === columnCount) return;
+    const root = rootRef.current;
+    const title = root?.querySelector<HTMLElement>("[data-photos-title]");
+    // Intro hasn't played yet; it reveals everything itself.
+    if (!root || !title || Number(gsap.getProperty(title, "opacity")) === 0) return;
+    const hidden = gsap.utils
+      .toArray<HTMLElement>("figure", root)
+      .filter((fig) => getComputedStyle(fig).visibility === "hidden");
+    if (hidden.length > 0) gsap.set(hidden, { autoAlpha: 1 });
+  }, [columnCount]);
+
+  useLayoutEffect(() => {
+    if (stage === "leaving" || columnCount === null) return;
     const root = rootRef.current;
     if (!root) return;
     const title = root.querySelector<HTMLElement>("[data-photos-title]");
@@ -98,9 +140,9 @@ export default function PhotosParallaxGrid({ photos }: { photos: Photo[] }) {
       });
 
       // Slide the photos in per column with a small column offset. Figures are
-      // animated (not the data-speed wrappers) so the intro transform never
+      // animated (not the parallax wrappers) so the intro transform never
       // collides with ScrollSmoother's parallax transform.
-      const cols = gsap.utils.toArray<HTMLElement>("[data-speed]", root);
+      const cols = gsap.utils.toArray<HTMLElement>("[data-photos-column]", root);
       cols.forEach((col, i) => {
         const figs = gsap.utils.toArray<HTMLElement>("figure", col);
         if (figs.length === 0) return;
@@ -117,7 +159,7 @@ export default function PhotosParallaxGrid({ photos }: { photos: Photo[] }) {
         );
       });
     })();
-  }, [contextSafe, stage]);
+  }, [contextSafe, stage, columnCount]);
 
   return (
     <div ref={rootRef} className="w-full">
@@ -127,11 +169,17 @@ export default function PhotosParallaxGrid({ photos }: { photos: Photo[] }) {
           <div data-photos-subtitle data-gsap="" suppressHydrationWarning className="text-sm md:text-base">a small collection</div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div
+          className="grid gap-6"
+          style={{ gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))` }}
+        >
           {columns.map((column, i) => (
-            <div key={i} className={COLUMN_VISIBILITY[i]}>
+            <div key={i}>
               <div
-                data-speed={COLUMN_SPEEDS[i]}
+                data-photos-column=""
+                // A lone column has nothing to drift against, and a slowed
+                // single column overruns the end of the page on mobile.
+                data-speed={columns.length > 1 ? COLUMN_SPEEDS[i] : undefined}
                 data-lag="0"
                 suppressHydrationWarning
                 className="flex flex-col gap-6 will-change-transform"

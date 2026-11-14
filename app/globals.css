@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* Matches .grainy-background so overscroll bounce and any area past the
+   content never flash the browser's default white. */
+html, body {
+    background: #1c1b37;
+}
+
 body {
     font-family: "Josefin Slab", serif;
     font-weight: 550;
