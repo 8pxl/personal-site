@@ -13,7 +13,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   // and its onComplete would fire a stray stage change mid-wipe. Track it so
   // leave() can kill it first.
   const enterTlRef = useRef<gsap.core.Timeline | null>(null);
-  const numCircles = 3;
+  // Covered pause between the page swap and the reveal. It absorbs the
+  // ScrollTrigger refresh that runs the frame after the new page mounts.
+  const enterHold = 0.1;
   const wipeDir = 0.7;
   const staggerOffset = 0.54;
   const ringColor = "#23223D";
@@ -43,13 +45,16 @@ export default function Providers({ children }: { children: React.ReactNode }) {
               { outlineWidth: `${diagonal / 2.0}px`, duration: wipeDir }, `-=${staggerOffset}`
             )
             .set("#transitionRing", { background: "none" })
+            // Swap only once the ring fully covers the screen: mounting the new
+            // page and recalibrating ScrollTrigger costs a long frame or two,
+            // which stutters the wipe if it is still moving but is invisible
+            // behind a static cover.
             .call(() => {
               requestAnimationFrame(() => startTransition(next));
-            }, undefined, wipeDir);
-          // No cleanup here: the router runs it right after next() fires (at
-          // 0.7s of the 1.02s wipe), which would kill the tail of the wipe on
-          // every navigation. Stray state from interruptions is handled by the
-          // baseline .set calls at the top of this timeline instead.
+            });
+          // No cleanup here: the router runs it right after next() fires.
+          // Stray state from interruptions is handled by the baseline .set
+          // calls at the top of this timeline instead.
         }}
         enter={(next) => {
           const diagonal = getDiagonal();
@@ -62,7 +67,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           enterTlRef.current = tl;
           tl
             .set("#transitionCircle1", {
-              width: 0, height: 0, delay: (numCircles - 1) * (wipeDir - staggerOffset)
+              width: 0, height: 0, delay: enterHold
             })
             .set("#transitionCircle2", { width: 0, height: 0 })
             .to("#transitionRing", { width: diagonal, height: diagonal, duration: 0.7 })

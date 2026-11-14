@@ -22,8 +22,10 @@ export default function WorkVideo({
       muted
       playsInline
       controls={controls}
+      // aspect-video reserves the box before metadata loads; otherwise the
+      // page grows mid-transition and forces a ScrollTrigger recalibration.
       className={
-        "w-full z-0 hover:scale-105 duration-500 rounded-xl " +
+        "w-full aspect-video z-0 hover:scale-105 duration-500 rounded-xl " +
         (left ? "hover:rotate-[2deg]" : "hover:rotate-[-2deg]") +
         (className ? ` ${className}` : "")
       }

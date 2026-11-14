@@ -11,26 +11,26 @@ export type Photo = {
 export const photos: Photo[] = [
   {
     src: "/photos/DSC00027.jpg",
-    width: 2017,
-    height: 3025,
+    width: 1707,
+    height: 2560,
     alt: "DSC00027"
   },
   {
     src: "/photos/DSC00172.jpg",
-    width: 4128,
-    height: 6033,
+    width: 1752,
+    height: 2560,
     alt: "DSC00172"
   },
   {
     src: "/photos/DSC00542.jpg",
-    width: 6062,
-    height: 3672,
+    width: 2560,
+    height: 1551,
     alt: "DSC00542"
   },
   {
     src: "/photos/DSC00638.jpg",
-    width: 6020,
-    height: 4012,
+    width: 2560,
+    height: 1706,
     alt: "DSC00638"
   },
   {
@@ -53,8 +53,8 @@ export const photos: Photo[] = [
   },
   {
     src: "/photos/DSC01482.ARW.jpg",
-    width: 6192,
-    height: 4128,
+    width: 2560,
+    height: 1707,
     alt: "DSC01482.ARW"
   },
   {
@@ -125,98 +125,98 @@ export const photos: Photo[] = [
   },
   {
     src: "/photos/DSC05162.jpg",
-    width: 3042,
-    height: 1904,
+    width: 2560,
+    height: 1602,
     alt: "DSC05162"
   },
   {
     src: "/photos/DSC07011.jpg",
-    width: 3827,
-    height: 5875,
+    width: 1668,
+    height: 2560,
     alt: "DSC07011"
   },
   {
     src: "/photos/DSC07187.jpg",
-    width: 1989,
-    height: 2985,
+    width: 1706,
+    height: 2560,
     alt: "DSC07187"
   },
   {
     src: "/photos/DSC07405.jpg",
-    width: 3867,
-    height: 5963,
+    width: 1660,
+    height: 2560,
     alt: "DSC07405"
   },
   {
-    src: "/photos/DSC07529 copy.jpg",
-    width: 6076,
-    height: 4050,
-    alt: "DSC07529 copy"
+    src: "/photos/DSC07529.jpg",
+    width: 2560,
+    height: 1706,
+    alt: "DSC07529"
   },
   {
     src: "/photos/DSC07553.jpg",
-    width: 6192,
-    height: 4128,
+    width: 2560,
+    height: 1707,
     alt: "DSC07553"
   },
   {
     src: "/photos/DSC07562.jpg",
-    width: 6060,
-    height: 4040,
+    width: 2560,
+    height: 1707,
     alt: "DSC07562"
   },
   {
     src: "/photos/DSC07587.jpg",
-    width: 5984,
-    height: 4032,
+    width: 2560,
+    height: 1725,
     alt: "DSC07587"
   },
   {
-    src: "/photos/DSC07631 Large.png",
+    src: "/photos/DSC07631.jpg",
     width: 1280,
     height: 853,
-    alt: "DSC07631 Large"
+    alt: "DSC07631"
   },
   {
     src: "/photos/DSC07702.jpg",
-    width: 5547,
-    height: 3768,
+    width: 2560,
+    height: 1739,
     alt: "DSC07702"
   },
   {
     src: "/photos/DSC07748.jpg",
-    width: 3953,
-    height: 6192,
+    width: 1634,
+    height: 2560,
     alt: "DSC07748"
   },
   {
     src: "/photos/DSC07802.jpg",
-    width: 4128,
-    height: 6192,
+    width: 1707,
+    height: 2560,
     alt: "DSC07802"
   },
   {
     src: "/photos/DSC07816.jpg",
-    width: 6034,
-    height: 3802,
+    width: 2560,
+    height: 1613,
     alt: "DSC07816"
   },
   {
     src: "/photos/DSC08001.jpg",
-    width: 6192,
-    height: 4128,
+    width: 2560,
+    height: 1707,
     alt: "DSC08001"
   },
   {
     src: "/photos/DSC08526.jpg",
-    width: 2064,
-    height: 3096,
+    width: 1707,
+    height: 2560,
     alt: "DSC08526"
   },
   {
     src: "/photos/DSC08656.jpg",
-    width: 1974,
-    height: 2962,
+    width: 1706,
+    height: 2560,
     alt: "DSC08656"
   },
   {
@@ -227,20 +227,20 @@ export const photos: Photo[] = [
   },
   {
     src: "/photos/linkage.jpg",
-    width: 6048,
-    height: 4032,
+    width: 2560,
+    height: 1707,
     alt: "linkage"
   },
   {
     src: "/photos/ph.jpg",
-    width: 3096,
-    height: 1449,
+    width: 2560,
+    height: 1198,
     alt: "ph"
   },
   {
     src: "/photos/phot.jpg",
-    width: 3981,
-    height: 5971,
+    width: 1707,
+    height: 2560,
     alt: "phot"
   }
 ] as const;

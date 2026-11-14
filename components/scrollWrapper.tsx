@@ -13,6 +13,30 @@ interface scrollWrapperProps {
   fixed: JSX.Element;
   moving: JSX.Element;
 }
+
+// effects() runs a full ScrollTrigger.refresh() on every call unless told not
+// to (supported at runtime, missing from the typings). Callers batch it into a
+// single refresh of their own.
+const NO_REFRESH = { refresh: false } as ScrollSmoother.EffectsVars & { refresh: boolean };
+
+// Brings the parallax effects in line with the current DOM: drops effects whose
+// elements left with the previous page and adds effects for new [data-speed]
+// elements. Elements that persist across routes (the starfield) keep theirs —
+// rebuilding ~150 star effects per navigation was most of the transition
+// stall, and the caller's refresh() recalibrates them anyway.
+function syncEffects(smoother: ScrollSmoother) {
+  const existing = new Set<Element>();
+  smoother.effects().forEach((st) => {
+    if (st.trigger?.isConnected) existing.add(st.trigger);
+    else st.kill();
+  });
+  const added = gsap.utils
+    .toArray<HTMLElement>("[data-speed]")
+    .filter((el) => !existing.has(el));
+  if (added.length > 0) {
+    smoother.effects(added, NO_REFRESH);
+  }
+}
 export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
   const pathname = usePathname();
   // Mirrored into a ref so the per-path pass can read the stage at run time
@@ -43,15 +67,21 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
     // land AFTER the per-route pass runs (Next streams it into the loading.tsx
     // Suspense boundary), and images/fonts settle later still — without this,
     // parallax effects calibrate against a zero-height page and stay dead.
+    // Every navigation also resizes the content, but the per-route pass below
+    // has usually refreshed against that size already; skip when nothing
+    // changed since the last refresh so the work isn't repeated mid-wipe.
     const content = document.getElementById("smooth-content");
+    let refreshedHeight = -1;
+    const onRefresh = () => {
+      refreshedHeight = content?.offsetHeight ?? -1;
+    };
+    ScrollTrigger.addEventListener("refresh", onRefresh);
     let recalTimer = 0;
     const recalibrate = () => {
       window.clearTimeout(recalTimer);
       recalTimer = window.setTimeout(() => {
-        const targets = gsap.utils.toArray<HTMLElement>("[data-speed]");
-        if (targets.length > 0) {
-          smoother.effects(targets);
-        }
+        if (content && content.offsetHeight === refreshedHeight) return;
+        syncEffects(smoother);
         ScrollTrigger.refresh();
       }, 150);
     };
@@ -60,6 +90,7 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
 
     return () => {
       ro.disconnect();
+      ScrollTrigger.removeEventListener("refresh", onRefresh);
       window.clearTimeout(recalTimer);
       mq.removeEventListener("change", applySmooth);
       smoother.kill();
@@ -172,20 +203,13 @@ export default function ScrollWrapper({ fixed, moving }: scrollWrapperProps) {
       });
     }
 
-    // Rebuild parallax effects for whatever data-speed elements the new page
-    // has. effects() replaces per-element, but killing first also drops
-    // triggers whose elements left the DOM with the previous page. Deferred a
-    // frame: at commit time the fresh DOM can still measure zero scrollHeight,
-    // which would calibrate the clamp() ranges (and trigger positions) to
-    // nothing. The rAF refresh recalibrates everything against real layout.
+    // Hook up parallax effects for the new page's data-speed elements. Deferred
+    // a frame: at commit time the fresh DOM can still measure zero
+    // scrollHeight, which would calibrate the clamp() ranges (and trigger
+    // positions) to nothing. The single refresh recalibrates everything —
+    // new and persisting effects alike — against real layout.
     const rafId = window.requestAnimationFrame(() => {
-      if (smoother) {
-        smoother.effects().forEach((st) => st.kill());
-        const effectTargets = gsap.utils.toArray<HTMLElement>("[data-speed]");
-        if (effectTargets.length > 0) {
-          smoother.effects(effectTargets);
-        }
-      }
+      if (smoother) syncEffects(smoother);
       ScrollTrigger.refresh();
     });
     return () => {

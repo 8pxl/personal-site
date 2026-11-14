@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "photos:optimize": "node scripts/optimize-images.mjs",
     "photos:manifest": "node scripts/generate-photos-manifest.mjs"
   },
   "dependencies": {
