@@ -36,13 +36,6 @@ body {
     /* transform: translateZ(0); */
   }
 
-.star {
-    position: absolute;
-    background: var(--color-white);
-    border-radius: 50%;
-    pointer-events: none;
-    /* opacity: 0; */
-}
 .aboutImage {
     width: 50%;
     aspect-ratio: 4 / 3;

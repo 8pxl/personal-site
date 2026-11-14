@@ -21,9 +21,8 @@ const NO_REFRESH = { refresh: false } as ScrollSmoother.EffectsVars & { refresh:
 
 // Brings the parallax effects in line with the current DOM: drops effects whose
 // elements left with the previous page and adds effects for new [data-speed]
-// elements. Elements that persist across routes (the starfield) keep theirs —
-// rebuilding ~150 star effects per navigation was most of the transition
-// stall, and the caller's refresh() recalibrates them anyway.
+// elements. Elements that persist across routes keep theirs; the caller's
+// refresh() recalibrates them.
 function syncEffects(smoother: ScrollSmoother) {
   const existing = new Set<Element>();
   smoother.effects().forEach((st) => {

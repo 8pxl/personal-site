@@ -37,11 +37,11 @@ export default function RootLayout({
             moving={
               <div className={"p-0 grainy-background"} >
                 {children}
-                <Starfield height={starsHeight} />
               </div>
             }
             fixed={
               <div>
+                <Starfield height={starsHeight} />
                 <SocialLinks />
                 <ResumeLink />
                 <Email />
